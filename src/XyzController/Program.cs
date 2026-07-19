@@ -1,6 +1,6 @@
 using System;
 using System.Windows.Forms;
-
+using WpfHost;
 namespace XyzController
 {
     /// <summary>
@@ -8,12 +8,12 @@ namespace XyzController
     /// </summary>
     internal static class Program
     {
-        [STAThread]
-        private static void Main()
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            // ★ 换窗体只改这一行：EmbedForm(new 你的Form());
+            WpfHost.Window_Loaded(new MainForm());
         }
+
     }
 }
