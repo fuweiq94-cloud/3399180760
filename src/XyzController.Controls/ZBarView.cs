@@ -28,38 +28,26 @@ namespace XyzController.Controls
 
         public void Advance(float lerp)
         {
-            float k = Math.Max(0.02f, Math.Min(1f, lerp));
+            float k = MathHelper.ClampLerp(lerp);
             CurrentZ += (TargetZ - CurrentZ) * k;
             Invalidate();
         }
 
         private RectangleF BarArea
         {
-            get
-            {
-                RectangleF r = ClientRectangle;
-                float w = 28f;
-                float cx = r.Width / 2f;
-                return new RectangleF(cx - w / 2f, r.Top + 18f, w, r.Height - 44f);
-            }
+            get { return PaintHelper.VerticalBarArea(ClientRectangle, 28f, 18f, 26f); }
         }
 
         private float ZToScreen(float z)
         {
-            RectangleF bar = BarArea;
-            float span = RangeMax - RangeMin;
-            if (span <= 0) span = 1;
-            return bar.Bottom - (z - RangeMin) / span * bar.Height;
+            return PaintHelper.ValueToY(BarArea, RangeMin, RangeMax, z);
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-
-            using (Brush bg = new SolidBrush(BackColor))
-                g.FillRectangle(bg, ClientRectangle);
+            PaintHelper.SetupGraphics(g);
+            PaintHelper.FillBackground(g, this);
 
             RectangleF bar = BarArea;
 
@@ -89,26 +77,11 @@ namespace XyzController.Controls
             }
 
             // 边框
-            using (Pen bp = new Pen(Color.FromArgb(150, 160, 175)))
-                g.DrawRectangle(bp, bar.X, bar.Y, bar.Width, bar.Height);
+            PaintHelper.DrawBarBorder(g, bar, Color.FromArgb(150, 160, 175));
 
             // 刻度
-            using (Pen tp = new Pen(Color.FromArgb(160, 170, 185)))
-            using (Brush tb = new SolidBrush(Color.FromArgb(120, 130, 145)))
-            using (Font f = new Font("Segoe UI", 7.5F))
-            {
-                StringFormat sf = new StringFormat();
-                sf.Alignment = StringAlignment.Near;
-                sf.LineAlignment = StringAlignment.Center;
-
-                int step = ChooseStep(RangeMax - RangeMin);
-                for (float z = RangeMin; z <= RangeMax + 0.01f; z += step)
-                {
-                    float y = ZToScreen(z);
-                    g.DrawLine(tp, bar.Right + 1, y, bar.Right + 5, y);
-                    g.DrawString(z.ToString("0"), f, tb, bar.Right + 8, y, sf);
-                }
-            }
+            PaintHelper.DrawVerticalTicks(g, bar, RangeMin, RangeMax,
+                delegate(float v) { return ZToScreen(v); });
 
             // 目标 Z 标记（箭头）
             float tY = ZToScreen(TargetZ);
@@ -127,9 +100,7 @@ namespace XyzController.Controls
             using (Font tf = new Font("Segoe UI", 9F, FontStyle.Bold))
             using (Brush tbh = new SolidBrush(Color.FromArgb(50, 60, 80)))
             {
-                StringFormat sf = new StringFormat();
-                sf.Alignment = StringAlignment.Center;
-                g.DrawString("Z", tf, tbh, ClientRectangle.Width / 2f, 2f, sf);
+                PaintHelper.DrawCenteredText(g, "Z", tf, tbh, ClientRectangle.Width / 2f, 2f);
             }
 
             // 底部数值
@@ -137,24 +108,9 @@ namespace XyzController.Controls
             using (Brush vb = new SolidBrush(Color.FromArgb(40, 80, 180)))
             {
                 string s = string.Format("{0:F2}", CurrentZ);
-                StringFormat sf = new StringFormat();
-                sf.Alignment = StringAlignment.Center;
-                g.DrawString(s, vf, vb, ClientRectangle.Width / 2f,
-                    ClientRectangle.Bottom - 16f, sf);
+                PaintHelper.DrawCenteredText(g, s, vf, vb, ClientRectangle.Width / 2f,
+                    ClientRectangle.Bottom - 16f);
             }
-        }
-
-        private static int ChooseStep(float span)
-        {
-            double raw = span / 6.0;
-            double[] candidates = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
-            double best = 1; double bestDiff = double.MaxValue;
-            foreach (double c in candidates)
-            {
-                double d = Math.Abs(c - raw);
-                if (d < bestDiff) { bestDiff = d; best = c; }
-            }
-            return (int)best;
         }
     }
 }

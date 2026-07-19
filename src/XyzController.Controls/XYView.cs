@@ -88,7 +88,7 @@ namespace XyzController.Controls
         // 每一帧由主窗体的 Timer 调用：current 向 target 平滑过渡
         public void Advance(float speedFraction)
         {
-            float lerp = Math.Max(0.02f, Math.Min(1f, speedFraction));
+            float lerp = MathHelper.ClampLerp(speedFraction);
             CurrentX += (TargetX - CurrentX) * lerp;
             CurrentY += (TargetY - CurrentY) * lerp;
 
@@ -117,14 +117,12 @@ namespace XyzController.Controls
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            PaintHelper.SetupGraphics(g);
 
             RectangleF area = DrawableArea;
 
             // 背景
-            using (Brush bg = new SolidBrush(BackColor))
-                g.FillRectangle(bg, ClientRectangle);
+            PaintHelper.FillBackground(g, this);
 
             DrawGrid(g, area);
             DrawAxes(g, area);
@@ -138,7 +136,7 @@ namespace XyzController.Controls
         private void DrawGrid(Graphics g, RectangleF area)
         {
             float span = RangeMax - RangeMin;
-            int step = ChooseStep(span);
+            int step = PaintHelper.ChooseStep(span, 10);
             using (Pen p = new Pen(Color.FromArgb(220, 224, 230), 1f))
             using (Pen pMajor = new Pen(Color.FromArgb(200, 206, 214), 1.4f))
             using (Brush tb = new SolidBrush(Color.FromArgb(120, 130, 145)))
@@ -176,19 +174,7 @@ namespace XyzController.Controls
             }
         }
 
-        private static int ChooseStep(float span)
-        {
-            // 让网格大约分 8~12 段
-            double raw = span / 10.0;
-            double[] candidates = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
-            double best = 1; double bestDiff = double.MaxValue;
-            foreach (double c in candidates)
-            {
-                double d = Math.Abs(c - raw);
-                if (d < bestDiff) { bestDiff = d; best = c; }
-            }
-            return (int)best;
-        }
+
 
         private void DrawAxes(Graphics g, RectangleF area)
         {
@@ -326,9 +312,7 @@ namespace XyzController.Controls
 
         private float Clamp(float v)
         {
-            if (v < RangeMin) return RangeMin;
-            if (v > RangeMax) return RangeMax;
-            return v;
+            return MathHelper.Clamp(v, RangeMin, RangeMax);
         }
 
         protected virtual void OnTargetSetByMouse(PointF p)

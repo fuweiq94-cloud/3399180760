@@ -1,4 +1,5 @@
 using System;
+using XyzController.Controls;
 
 namespace XyzController.Logic
 {
@@ -34,7 +35,7 @@ namespace XyzController.Logic
             Name = name;
             Min = min;
             Max = max;
-            float clamped = Clamp(initial);
+            float clamped = MathHelper.Clamp(initial, Min, Max);
             Current = clamped;
             Target = clamped;
         }
@@ -44,7 +45,7 @@ namespace XyzController.Logic
         /// <summary>设置目标值（会自动限制到 [Min, Max]）。</summary>
         public void SetTarget(float value)
         {
-            float clamped = Clamp(value);
+            float clamped = MathHelper.Clamp(value, Min, Max);
             if (Math.Abs(clamped - Target) < 0.0001f) return;
             Target = clamped;
             OnChanged();
@@ -88,7 +89,7 @@ namespace XyzController.Logic
         /// </summary>
         public void Advance(float lerpFraction)
         {
-            float k = Clamp01(lerpFraction);
+            float k = MathHelper.Clamp01(lerpFraction);
 
             // lerp = 0 → 不动；否则按比例推进
             if (k <= 0f) return;
@@ -114,20 +115,6 @@ namespace XyzController.Logic
         }
 
         // ============== 工具 ==============
-
-        private float Clamp(float v)
-        {
-            if (v < Min) return Min;
-            if (v > Max) return Max;
-            return v;
-        }
-
-        private static float Clamp01(float v)
-        {
-            if (v < 0f) return 0f;
-            if (v > 1f) return 1f;
-            return v;
-        }
 
         protected virtual void OnChanged()
         {

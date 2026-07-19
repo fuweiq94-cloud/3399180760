@@ -47,6 +47,14 @@ namespace XyzController.Logic
 
         // ============== 批量操作 ==============
 
+        /// <summary>对三个轴统一执行操作。</summary>
+        private void ForEachAxis(Action<AxisController> action)
+        {
+            action(X);
+            action(Y);
+            action(Z);
+        }
+
         /// <summary>一次性设置 X / Y / Z 三个目标。</summary>
         public void SetTarget(float x, float y, float z)
         {
@@ -58,25 +66,22 @@ namespace XyzController.Logic
         /// <summary>三个轴都回到原点 (0, 0, 0)。</summary>
         public void ResetToOrigin()
         {
-            X.ResetToOrigin();
-            Y.ResetToOrigin();
-            Z.ResetToOrigin();
+            ForEachAxis(delegate(AxisController a) { a.ResetToOrigin(); });
         }
 
         /// <summary>三个轴都移到各自范围的中点。</summary>
         public void SetToCenter()
         {
-            X.SetToCenter();
-            Y.SetToCenter();
-            Z.SetToCenter();
+            ForEachAxis(delegate(AxisController a) { a.SetToCenter(); });
         }
 
         /// <summary>三个轴都随机选一个目标（用于演示）。</summary>
         public void SetRandomTarget(Random rng)
         {
-            X.SetTarget(rng.Next((int)X.Min, (int)X.Max + 1));
-            Y.SetTarget(rng.Next((int)Y.Min, (int)Y.Max + 1));
-            Z.SetTarget(rng.Next((int)Z.Min, (int)Z.Max + 1));
+            ForEachAxis(delegate(AxisController a)
+            {
+                a.SetTarget(rng.Next((int)a.Min, (int)a.Max + 1));
+            });
         }
 
         // ============== 动画 ==============
@@ -96,9 +101,7 @@ namespace XyzController.Logic
         public void Advance()
         {
             float lerp = CurrentLerpFraction;
-            X.Advance(lerp);
-            Y.Advance(lerp);
-            Z.Advance(lerp);
+            ForEachAxis(delegate(AxisController a) { a.Advance(lerp); });
         }
 
         protected virtual void OnChanged()

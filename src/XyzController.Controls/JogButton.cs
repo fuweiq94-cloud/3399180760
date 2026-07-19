@@ -61,80 +61,74 @@ namespace XyzController.Controls
         {
             if (e.Button == MouseButtons.Left)
             {
-                _pressed = true;
-                _pressTime = DateTime.Now;
-                _timer.Interval = InitialDelay;   // 第一次延迟长一点
-                _timer.Start();
-                OnJog();                          // 立即触发一次
-                Invalidate();
+                BeginPress();
                 Focus();
             }
             base.OnMouseDown(e);
         }
-
+        
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            if (_pressed)
-            {
-                _pressed = false;
-                _timer.Stop();
-                OnStop();
-                Invalidate();
-            }
+            EndPress();
             base.OnMouseUp(e);
         }
-
+        
         protected override void OnMouseLeave(EventArgs e)
         {
             _hover = false;
-            // 鼠标离开时如果还按着，当作松开处理（避免"卡住一直触发"）
-            if (_pressed)
-            {
-                _pressed = false;
-                _timer.Stop();
-                OnStop();
-            }
+            // 鼠标离开时如果还按着，当作松开处理（避免“卡住一直触发”）
+            EndPress();
             Invalidate();
             base.OnMouseLeave(e);
         }
-
+        
         protected override void OnMouseEnter(EventArgs e)
         {
             _hover = true;
             Invalidate();
             base.OnMouseEnter(e);
         }
-
+        
         // —— 键盘也能用：空格/回车按住等效鼠标按住 ——
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if ((e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter) && !_pressed)
             {
-                _pressed = true;
-                _pressTime = DateTime.Now;
-                _timer.Interval = InitialDelay;
-                _timer.Start();
-                OnJog();
-                Invalidate();
+                BeginPress();
                 e.Handled = true;
             }
             base.OnKeyDown(e);
         }
-
+        
         protected override void OnKeyUp(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter)
             {
-                if (_pressed)
-                {
-                    _pressed = false;
-                    _timer.Stop();
-                    OnStop();
-                    Invalidate();
-                }
+                EndPress();
                 e.Handled = true;
             }
             base.OnKeyUp(e);
+        }
+        
+        /// <summary>按下：启动定时器并立即触发一次 Jog。</summary>
+        private void BeginPress()
+        {
+            _pressed = true;
+            _pressTime = DateTime.Now;
+            _timer.Interval = InitialDelay;
+            _timer.Start();
+            OnJog();
+            Invalidate();
+        }
+        
+        /// <summary>松开：停止定时器并触发 Stop。</summary>
+        private void EndPress()
+        {
+            if (!_pressed) return;
+            _pressed = false;
+            _timer.Stop();
+            OnStop();
+            Invalidate();
         }
 
         protected virtual void OnJog()
@@ -153,8 +147,7 @@ namespace XyzController.Controls
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            PaintHelper.SetupGraphics(g);
 
             // 圆角矩形区域
             RectangleF rect = new RectangleF(0, 0, Width - 1, Height - 1);

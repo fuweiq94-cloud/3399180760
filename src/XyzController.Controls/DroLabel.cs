@@ -90,12 +90,10 @@ namespace XyzController.Controls
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            PaintHelper.SetupGraphics(g);
 
             // 背景（深色面板）
-            using (Brush bg = new SolidBrush(BackColor))
-                g.FillRectangle(bg, ClientRectangle);
+            PaintHelper.FillBackground(g, this);
 
             // 内嵌边框（凹陷效果）
             using (Pen p1 = new Pen(Color.FromArgb(50, 60, 75)))

@@ -38,6 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="PaintHelper.cs" />
+    <Compile Include="MathHelper.cs" />
     <Compile Include="XYView.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -63,11 +63,8 @@ namespace XyzController.Controls
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-
-            using (Brush bg = new SolidBrush(BackColor))
-                g.FillRectangle(bg, ClientRectangle);
+            PaintHelper.SetupGraphics(g);
+            PaintHelper.FillBackground(g, this);
 
             RectangleF bar = BarArea;
 
@@ -93,8 +90,7 @@ namespace XyzController.Controls
                 g.FillRectangle(fb, fillRect);
 
             // 边框
-            using (Pen bp = new Pen(Color.FromArgb(150, 160, 175)))
-                g.DrawRectangle(bp, bar.X, bar.Y, bar.Width, bar.Height);
+            PaintHelper.DrawBarBorder(g, bar, Color.FromArgb(150, 160, 175));
 
             // 刻度
             DrawTicks(g);
@@ -110,15 +106,13 @@ namespace XyzController.Controls
         {
             get
             {
-                RectangleF r = ClientRectangle;
                 if (Orientation == Orientations.Vertical)
                 {
-                    float w = 30f;
-                    float cx = r.Width / 2f;
-                    return new RectangleF(cx - w / 2f, r.Top + 18f, w, r.Height - 44f);
+                    return PaintHelper.VerticalBarArea(ClientRectangle, 30f, 18f, 26f);
                 }
                 else
                 {
+                    RectangleF r = ClientRectangle;
                     float h = 26f;
                     float cy = r.Height / 2f;
                     return new RectangleF(r.Left + 18f, cy - h / 2f, r.Width - 36f, h);
@@ -130,13 +124,13 @@ namespace XyzController.Controls
         private float ValueToPos(float v)
         {
             RectangleF bar = BarArea;
+            if (Orientation == Orientations.Vertical)
+                return PaintHelper.ValueToY(bar, RangeMin, RangeMax, v);
+
             float span = RangeMax - RangeMin;
             if (span <= 0) span = 1;
             float ratio = (v - RangeMin) / span;
-            if (Orientation == Orientations.Vertical)
-                return bar.Bottom - ratio * bar.Height;
-            else
-                return bar.Left + ratio * bar.Width;
+            return bar.Left + ratio * bar.Width;
         }
 
         private RectangleF MakeFillRect(float zeroPos, float curPos)
@@ -178,27 +172,27 @@ namespace XyzController.Controls
         private void DrawTicks(Graphics g)
         {
             RectangleF bar = BarArea;
-            int step = ChooseStep(RangeMax - RangeMin);
+            if (Orientation == Orientations.Vertical)
+            {
+                PaintHelper.DrawVerticalTicks(g, bar, RangeMin, RangeMax,
+                    delegate(float v) { return ValueToPos(v); });
+                return;
+            }
+
+            // 水平方向刻度
+            int step = PaintHelper.ChooseStep(RangeMax - RangeMin, 6);
             using (Pen tp = new Pen(Color.FromArgb(160, 170, 185)))
             using (Brush tb = new SolidBrush(Color.FromArgb(120, 130, 145)))
             using (Font f = new Font("Segoe UI", 7.5F))
             {
-                StringFormat sf = new StringFormat { LineAlignment = StringAlignment.Center };
+                StringFormat sf = new StringFormat();
+                sf.LineAlignment = StringAlignment.Center;
+                sf.Alignment = StringAlignment.Center;
                 for (float v = RangeMin; v <= RangeMax + 0.01f; v += step)
                 {
                     float pos = ValueToPos(v);
-                    if (Orientation == Orientations.Vertical)
-                    {
-                        g.DrawLine(tp, bar.Right + 1, pos, bar.Right + 5, pos);
-                        sf.Alignment = StringAlignment.Near;
-                        g.DrawString(v.ToString("0"), f, tb, bar.Right + 8, pos, sf);
-                    }
-                    else
-                    {
-                        g.DrawLine(tp, pos, bar.Bottom + 1, pos, bar.Bottom + 5);
-                        sf.Alignment = StringAlignment.Center;
-                        g.DrawString(v.ToString("0"), f, tb, pos, bar.Bottom + 8, sf);
-                    }
+                    g.DrawLine(tp, pos, bar.Bottom + 1, pos, bar.Bottom + 5);
+                    g.DrawString(v.ToString("0"), f, tb, pos, bar.Bottom + 8, sf);
                 }
             }
         }
@@ -242,28 +236,18 @@ namespace XyzController.Controls
             using (Font f = new Font("Segoe UI", 10F, FontStyle.Bold))
             using (Brush b = new SolidBrush(Color.FromArgb(60, 70, 90)))
             {
-                StringFormat sf = new StringFormat { Alignment = StringAlignment.Center };
                 if (Orientation == Orientations.Vertical)
-                    g.DrawString(AxisLabel ?? "", f, b, Width / 2f, 2f, sf);
+                {
+                    PaintHelper.DrawCenteredText(g, AxisLabel ?? "", f, b, Width / 2f, 2f);
+                }
                 else
                 {
+                    StringFormat sf = new StringFormat();
+                    sf.Alignment = StringAlignment.Center;
                     sf.LineAlignment = StringAlignment.Center;
                     g.DrawString(AxisLabel ?? "", f, b, 8f, Height / 2f, sf);
                 }
             }
-        }
-
-        private static int ChooseStep(float span)
-        {
-            double raw = span / 6.0;
-            double[] candidates = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
-            double best = 1; double bestDiff = double.MaxValue;
-            foreach (double c in candidates)
-            {
-                double d = Math.Abs(c - raw);
-                if (d < bestDiff) { bestDiff = d; best = c; }
-            }
-            return (int)best;
         }
     }
 }

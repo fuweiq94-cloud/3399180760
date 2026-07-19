@@ -22,9 +22,7 @@ namespace XyzController
         private readonly XyzControllerHub _hub;
 
         // —— JOG 服务：每个轴一个 ——
-        private AxisJogService _jogX;
-        private AxisJogService _jogY;
-        private AxisJogService _jogZ;
+        private AxisJogService[] _jogServices;
 
         // —— UI 同步锁：防止 hub.Changed 回调里又改 UI 触发新事件 ——
         private bool _syncing;
@@ -100,20 +98,28 @@ namespace XyzController
         private void HookEvents()
         {
             // —— 滑块、数字框、按钮（全部用命名方法 + 委托构造）——
-            trbX.Scroll += new EventHandler(TrbX_Scroll);
-            trbY.Scroll += new EventHandler(TrbY_Scroll);
-            trbZ.Scroll += new EventHandler(TrbZ_Scroll);
+            trbX.Tag = _hub.X; trbY.Tag = _hub.Y; trbZ.Tag = _hub.Z;
+            trbX.Scroll += new EventHandler(Trb_Scroll);
+            trbY.Scroll += new EventHandler(Trb_Scroll);
+            trbZ.Scroll += new EventHandler(Trb_Scroll);
 
-            nudX.ValueChanged += new EventHandler(NudX_ValueChanged);
-            nudY.ValueChanged += new EventHandler(NudY_ValueChanged);
-            nudZ.ValueChanged += new EventHandler(NudZ_ValueChanged);
+            nudX.Tag = _hub.X; nudY.Tag = _hub.Y; nudZ.Tag = _hub.Z;
+            nudX.ValueChanged += new EventHandler(Nud_ValueChanged);
+            nudY.ValueChanged += new EventHandler(Nud_ValueChanged);
+            nudZ.ValueChanged += new EventHandler(Nud_ValueChanged);
 
-            btnXMinus.Click += new EventHandler(BtnXMinus_Click);
-            btnXPlus.Click  += new EventHandler(BtnXPlus_Click);
-            btnYMinus.Click += new EventHandler(BtnYMinus_Click);
-            btnYPlus.Click  += new EventHandler(BtnYPlus_Click);
-            btnZMinus.Click += new EventHandler(BtnZMinus_Click);
-            btnZPlus.Click  += new EventHandler(BtnZPlus_Click);
+            btnXMinus.Tag = new object[] { _hub.X, -1 };
+            btnXPlus.Tag  = new object[] { _hub.X, +1 };
+            btnYMinus.Tag = new object[] { _hub.Y, -1 };
+            btnYPlus.Tag  = new object[] { _hub.Y, +1 };
+            btnZMinus.Tag = new object[] { _hub.Z, -1 };
+            btnZPlus.Tag  = new object[] { _hub.Z, +1 };
+            btnXMinus.Click += new EventHandler(BtnStep_Click);
+            btnXPlus.Click  += new EventHandler(BtnStep_Click);
+            btnYMinus.Click += new EventHandler(BtnStep_Click);
+            btnYPlus.Click  += new EventHandler(BtnStep_Click);
+            btnZMinus.Click += new EventHandler(BtnStep_Click);
+            btnZPlus.Click  += new EventHandler(BtnStep_Click);
 
             // —— 通用按钮 ——
             btnZero.Click      += new EventHandler(BtnZero_Click);
@@ -124,9 +130,12 @@ namespace XyzController
             trbSpeed.Scroll += new EventHandler(TrbSpeed_Scroll);
 
             // —— JOG 服务：三轴各创建一个 ——
-            _jogX = new AxisJogService(_hub.X);
-            _jogY = new AxisJogService(_hub.Y);
-            _jogZ = new AxisJogService(_hub.Z);
+            _jogServices = new AxisJogService[]
+            {
+                new AxisJogService(_hub.X),
+                new AxisJogService(_hub.Y),
+                new AxisJogService(_hub.Z)
+            };
 
             // 寸动 / 连续模式切换
             rbIncremental.CheckedChanged += new EventHandler(RbMode_CheckedChanged);
@@ -137,12 +146,12 @@ namespace XyzController
             // JogButton 控件：Jog 事件 = 按下/持续触发；Stop 事件 = 松开
             // 注意：寸动模式下 Jog 事件会重复触发，但每次走一步；
             //       连续模式下 Jog 只在按下时触发一次（设目标到限位），Stop 才停。
-            BindJogButton(jogXPlus, _jogX);
-            BindJogButton(jogXMinus, _jogX);
-            BindJogButton(jogYPlus, _jogY);
-            BindJogButton(jogYMinus, _jogY);
-            BindJogButton(jogZPlus, _jogZ);
-            BindJogButton(jogZMinus, _jogZ);
+            BindJogButton(jogXPlus, _jogServices[0]);
+            BindJogButton(jogXMinus, _jogServices[0]);
+            BindJogButton(jogYPlus, _jogServices[1]);
+            BindJogButton(jogYMinus, _jogServices[1]);
+            BindJogButton(jogZPlus, _jogServices[2]);
+            BindJogButton(jogZMinus, _jogServices[2]);
 
             // 急停按钮
             btnEStop.Click += new EventHandler(BtnEStop_Click);
@@ -160,23 +169,30 @@ namespace XyzController
             SyncUiFromHub();
         }
 
-        // —— 滑块事件处理器 ——
-        private void TrbX_Scroll(object sender, EventArgs e) { _hub.X.SetTarget(trbX.Value); }
-        private void TrbY_Scroll(object sender, EventArgs e) { _hub.Y.SetTarget(trbY.Value); }
-        private void TrbZ_Scroll(object sender, EventArgs e) { _hub.Z.SetTarget(trbZ.Value); }
+        // —— 滑块事件处理器（通过 Tag 获取对应轴）——
+        private void Trb_Scroll(object sender, EventArgs e)
+        {
+            TrackBar trb = (TrackBar)sender;
+            AxisController axis = (AxisController)trb.Tag;
+            axis.SetTarget(trb.Value);
+        }
 
-        // —— 数字框事件处理器 ——
-        private void NudX_ValueChanged(object sender, EventArgs e) { _hub.X.SetTarget((float)nudX.Value); }
-        private void NudY_ValueChanged(object sender, EventArgs e) { _hub.Y.SetTarget((float)nudY.Value); }
-        private void NudZ_ValueChanged(object sender, EventArgs e) { _hub.Z.SetTarget((float)nudZ.Value); }
+        // —— 数字框事件处理器（通过 Tag 获取对应轴）——
+        private void Nud_ValueChanged(object sender, EventArgs e)
+        {
+            NumericUpDown nud = (NumericUpDown)sender;
+            AxisController axis = (AxisController)nud.Tag;
+            axis.SetTarget((float)nud.Value);
+        }
 
-        // —— 单步按钮（X 轴）——
-        private void BtnXMinus_Click(object sender, EventArgs e) { _hub.X.Step(-1); }
-        private void BtnXPlus_Click(object sender, EventArgs e)  { _hub.X.Step(+1); }
-        private void BtnYMinus_Click(object sender, EventArgs e) { _hub.Y.Step(-1); }
-        private void BtnYPlus_Click(object sender, EventArgs e)  { _hub.Y.Step(+1); }
-        private void BtnZMinus_Click(object sender, EventArgs e) { _hub.Z.Step(-1); }
-        private void BtnZPlus_Click(object sender, EventArgs e)  { _hub.Z.Step(+1); }
+        // —— 单步按钮（通过 Tag 获取轴和方向）——
+        private void BtnStep_Click(object sender, EventArgs e)
+        {
+            object[] data = (object[])((Control)sender).Tag;
+            AxisController axis = (AxisController)data[0];
+            int direction = (int)data[1];
+            axis.Step(direction);
+        }
 
         // —— 通用按钮 ——
         private void BtnZero_Click(object sender, EventArgs e)      { _hub.ResetToOrigin(); }
@@ -195,26 +211,27 @@ namespace XyzController
         private void RbMode_CheckedChanged(object sender, EventArgs e)
         {
             JogMode m = rbIncremental.Checked ? JogMode.Incremental : JogMode.Continuous;
-            _jogX.SetMode(m);
-            _jogY.SetMode(m);
-            _jogZ.SetMode(m);
+            ForEachJog(delegate(AxisJogService s) { s.SetMode(m); });
         }
 
         // —— JOG 步长 ——
         private void NudJogStep_ValueChanged(object sender, EventArgs e)
         {
             float step = (float)nudJogStep.Value;
-            _jogX.SetStepDistance(step);
-            _jogY.SetStepDistance(step);
-            _jogZ.SetStepDistance(step);
+            ForEachJog(delegate(AxisJogService s) { s.SetStepDistance(step); });
         }
 
         // —— 急停 ——
         private void BtnEStop_Click(object sender, EventArgs e)
         {
-            _jogX.EmergencyStop();
-            _jogY.EmergencyStop();
-            _jogZ.EmergencyStop();
+            ForEachJog(delegate(AxisJogService s) { s.EmergencyStop(); });
+        }
+
+        /// <summary>对三个 JOG 服务统一执行操作。</summary>
+        private void ForEachJog(Action<AxisJogService> action)
+        {
+            foreach (AxisJogService s in _jogServices)
+                action(s);
         }
 
         // —— 鼠标点击 XY 视图设定目标 ——
@@ -297,17 +314,17 @@ namespace XyzController
             try
             {
                 // 滑块（必须整数）
-                trbX.Value = ClampInt((int)Math.Round(_hub.X.Target), trbX.Minimum, trbX.Maximum);
-                trbY.Value = ClampInt((int)Math.Round(_hub.Y.Target), trbY.Minimum, trbY.Maximum);
-                trbZ.Value = ClampInt((int)Math.Round(_hub.Z.Target), trbZ.Minimum, trbZ.Maximum);
+                trbX.Value = MathHelper.Clamp((int)Math.Round(_hub.X.Target), trbX.Minimum, trbX.Maximum);
+                trbY.Value = MathHelper.Clamp((int)Math.Round(_hub.Y.Target), trbY.Minimum, trbY.Maximum);
+                trbZ.Value = MathHelper.Clamp((int)Math.Round(_hub.Z.Target), trbZ.Minimum, trbZ.Maximum);
 
                 // 数字框（支持小数）
                 if (nudX.Value != (decimal)_hub.X.Target)
-                    nudX.Value = ClampDecimal((decimal)_hub.X.Target, nudX.Minimum, nudX.Maximum);
+                    nudX.Value = MathHelper.Clamp((decimal)_hub.X.Target, nudX.Minimum, nudX.Maximum);
                 if (nudY.Value != (decimal)_hub.Y.Target)
-                    nudY.Value = ClampDecimal((decimal)_hub.Y.Target, nudY.Minimum, nudY.Maximum);
+                    nudY.Value = MathHelper.Clamp((decimal)_hub.Y.Target, nudY.Minimum, nudY.Maximum);
                 if (nudZ.Value != (decimal)_hub.Z.Target)
-                    nudZ.Value = ClampDecimal((decimal)_hub.Z.Target, nudZ.Minimum, nudZ.Maximum);
+                    nudZ.Value = MathHelper.Clamp((decimal)_hub.Z.Target, nudZ.Minimum, nudZ.Maximum);
 
                 // 自定义视图：目标和当前都同步
                 xyView.TargetX = _hub.X.Target;
@@ -349,21 +366,6 @@ namespace XyzController
             else if (v < 90) label = "速度：快";
             else label = "速度：瞬时";
             lblSpeed.Text = label;
-        }
-
-        // ============== 工具方法 ==============
-        private static int ClampInt(int v, int min, int max)
-        {
-            if (v < min) return min;
-            if (v > max) return max;
-            return v;
-        }
-
-        private static decimal ClampDecimal(decimal v, decimal min, decimal max)
-        {
-            if (v < min) return min;
-            if (v > max) return max;
-            return v;
         }
     }
 }
