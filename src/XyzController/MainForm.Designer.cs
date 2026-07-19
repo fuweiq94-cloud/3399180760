@@ -853,7 +853,7 @@ namespace XyzController
             // 
             // animTimer
             // 
-            this.animTimer.Interval = 20;
+            this.animTimer.Interval = 10;
             this.animTimer.Tick += new System.EventHandler(this.animTimer_Tick);
             // 
             // MainForm
