@@ -1,0 +1,71 @@
+# ============================================================
+# .NET / C# 项目通用排除规则（旧式 .NET Framework .csproj）
+# ============================================================
+
+# ---------- 编译输出 ----------
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Dd]ebug/
+[Rr]elease/
+
+# 编译产物（exe / dll / pdb 等）
+*.exe
+*.dll
+*.pdb
+*.mdb
+*.cache
+*.log
+*.tlog
+*.idb
+*.ilk
+*.exp
+*.lib
+*.pdb
+*.ipdb
+*.iobj
+
+# ---------- Visual Studio 临时文件 ----------
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.vcxproj.user
+
+# ReSharper / Rider
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# ---------- 系统杂项 ----------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# ---------- 临时与备份文件 ----------
+*.tmp
+*.bak
+*.swp
+*~
+
+# ---------- 本项目特有 ----------
+# 已经被错误提交到源码目录的编译产物（清理用，无需保留）
+src/XyzController/XyzController.exe
+src/XyzController.Controls/XyzController.Controls.dll
