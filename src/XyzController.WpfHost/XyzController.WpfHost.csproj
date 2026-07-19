@@ -68,11 +68,12 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild" />
   <Target Name="AfterBuild" />
-  <!-- 后置构建目标：将 Bootstrapper.cs 编译为独立 EXE（引用本项目生成的 DLL）。
-       EXE 通过反射加载 XyzController.dll 创建 MainForm，无编译时依赖。 -->
+  <!-- 后置构建目标：将 Bootstrapper.cs 编译为独立 EXE。
+       ★ EXE 不引用 WpfHost DLL（避免同名程序集冲突），
+       运行时通过反射加载 WpfHost DLL 并调用 WpfHostLauncher.Run()。 -->
   <Target Name="BuildExe" AfterTargets="Build">
     <Csc Sources="$(MSBuildProjectDirectory)\Bootstrapper.cs"
-         References="@(ReferencePath);$(TargetPath)"
+         References="@(ReferencePath)"
          OutputAssembly="$(TargetDir)$(AssemblyName).exe"
          TargetType="winexe"
          LangVersion="latest"

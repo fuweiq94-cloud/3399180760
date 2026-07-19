@@ -11,8 +11,11 @@ namespace XyzController.WpfHost
     /// 单独编译为 EXE。
     ///
     /// 设计要点：
+    /// - EXE 与 DLL 同名（都叫 XyzController.WpfHost），CLR 会将 EXE 自身
+    ///   当作同名程序集，导致无法从 DLL 加载类型。因此 EXE 不引用 WpfHost DLL，
+    ///   而是在运行时通过反射加载 DLL 并调用 WpfHostLauncher.Run()。
     /// - WpfHost 项目不直接引用 XyzController 项目（避免循环依赖）；
-    /// - EXE 在运行时通过反射从同目录的 XyzController.dll 加载 MainForm；
+    /// - EXE 在运行时通过反射从同目录的 XyzController.dll 加载 MainForm。
     /// - 部署时须将 XyzController.dll、XyzController.Controls.dll
     ///   与 XyzController.WpfHost.dll 放在 EXE 同目录下。
     /// </summary>
@@ -25,33 +28,74 @@ namespace XyzController.WpfHost
             AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
 
             string exeDir = AppDomain.CurrentDomain.BaseDirectory;
-            string dllPath = Path.Combine(exeDir, "XyzController.dll");
+            string logPath = Path.Combine(exeDir, "bootstrapper.log");
 
-            if (!File.Exists(dllPath))
+            try
+            {
+                // 1. 加载 XyzController.dll 并创建 MainForm
+                string xcDllPath = Path.Combine(exeDir, "XyzController.dll");
+                if (!File.Exists(xcDllPath))
+                {
+                    MessageBox.Show(
+                        "未找到 XyzController.dll，请将其放置于 EXE 同目录下。\n\n路径：" + xcDllPath,
+                        "XyzController.WpfHost",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return 1;
+                }
+
+                Assembly xcAsm = Assembly.LoadFrom(xcDllPath);
+                Type formType = xcAsm.GetType("XyzController.MainForm");
+                if (formType == null)
+                {
+                    MessageBox.Show(
+                        "XyzController.dll 中未找到 XyzController.MainForm 类型。",
+                        "XyzController.WpfHost",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return 1;
+                }
+
+                Form form = (Form)Activator.CreateInstance(formType);
+
+                // 2. ★ 通过反射加载 WpfHost DLL 并调用 WpfHostLauncher.Run(form)
+                //    不能用编译时引用，因为 EXE 与 DLL 同名（XyzController.WpfHost），
+                //    CLR 会将 EXE 自身当作该程序集，导致 TypeLoadException。
+                return LaunchViaReflection(exeDir, form);
+            }
+            catch (Exception ex)
+            {
+                try { File.WriteAllText(logPath, ex.ToString()); } catch { }
+                MessageBox.Show(
+                    "启动失败：" + ex.Message + "\n\n详细日志已写入：" + logPath,
+                    "XyzController.WpfHost",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return 1;
+            }
+        }
+
+        /// <summary>
+        /// 通过反射加载 WpfHost DLL 并调用 WpfHostLauncher.Run(Form)。
+        /// 独立方法确保 JIT 在调用时才解析相关类型。
+        /// </summary>
+        private static int LaunchViaReflection(string exeDir, Form form)
+        {
+            string whDllPath = Path.Combine(exeDir, "XyzController.WpfHost.dll");
+            if (!File.Exists(whDllPath))
             {
                 MessageBox.Show(
-                    "未找到 XyzController.dll，请将其放置于 EXE 同目录下。\n\n路径：" + dllPath,
+                    "未找到 XyzController.WpfHost.dll，请将其放置于 EXE 同目录下。",
                     "XyzController.WpfHost",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return 1;
             }
 
-            // 通过反射加载 XyzController.dll 并创建 MainForm 实例
-            Assembly asm = Assembly.LoadFrom(dllPath);
-            Type formType = asm.GetType("XyzController.MainForm");
-            if (formType == null)
-            {
-                MessageBox.Show(
-                    "XyzController.dll 中未找到 XyzController.MainForm 类型。",
-                    "XyzController.WpfHost",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return 1;
-            }
-
-            Form form = (Form)Activator.CreateInstance(formType);
-            return WpfHostLauncher.Run(form);
+            Assembly whAsm = Assembly.LoadFrom(whDllPath);
+            Type launcherType = whAsm.GetType("XyzController.WpfHost.WpfHostLauncher", true);
+            MethodInfo runMethod = launcherType.GetMethod("Run", new[] { typeof(Form) });
+            return (int)runMethod.Invoke(null, new object[] { form });
         }
 
         /// <summary>

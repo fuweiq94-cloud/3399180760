@@ -5,6 +5,8 @@
         Height="900" Width="1900"
         MinWidth="1279" MinHeight="662"
         WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
         Loaded="Window_Loaded"
         Closed="Window_Closed">
     <Grid>

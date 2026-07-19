@@ -2,7 +2,6 @@
 <!-- 控件类库：XYView / ZBarView 自定义绘制控件。
      单独编译成 DLL，主项目引用后即可在 VS 工具箱中看到。 -->
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <AssemblyName>XyzController.Controls</AssemblyName>
@@ -13,30 +12,28 @@
     <LangVersion>latest</LangVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B1C4D7E2-3F6A-4B8C-9D1E-2A5F7B9C8D33}</ProjectGuid>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\XyzController.WpfHost\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Include="PaintHelper.cs" />
     <Compile Include="MathHelper.cs" />
@@ -60,10 +57,8 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-
   <!-- 必需：引入 C# 构建目标。老式（非 SDK 风格）的 .csproj 不会自动加载。 -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild" />
   <Target Name="AfterBuild" />
-
 </Project>

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -12,6 +13,9 @@ namespace XyzController.WpfHost
     /// </summary>
     public static class WpfHostLauncher
     {
+        [DllImport("user32.dll")]
+        private static extern bool SetProcessDPIAware();
+
         /// <summary>
         /// 启动 WPF 宿主并嵌入指定的 WinForms 窗体（阻塞式，窗口关闭后返回）。
         /// </summary>
@@ -27,9 +31,17 @@ namespace XyzController.WpfHost
                 throw new InvalidOperationException(
                     "WpfHostLauncher.Run 必须在 [STAThread] 线程中调用（请为 Main 方法标注 [STAThread]）。");
 
-            // ★ 必须在创建任何 WinForms 控件之前调用，否则嵌入的控件显示经典样式
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            // ★ DPI 感知：必须在创建任何窗口之前调用。
+            //    让 WPF 和 WinForms 都按实际 DPI 渲染，避免 Windows 位图缩放导致模糊/尺寸不一致。
+            if (Environment.OSVersion.Version.Major >= 6)
+                SetProcessDPIAware();
+
+            // ★ 必须在创建任何 WinForms 控件之前调用，否则嵌入的控件显示经典样式。
+            //    若调用方已提前调用（如 Bootstrapper），SetCompatibleTextRenderingDefault
+            //    会因窗口已创建而抛出 InvalidOperationException，安全忽略即可。
+            System.Windows.Forms.Application.EnableVisualStyles();
+            try { System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false); }
+            catch (InvalidOperationException) { /* 调用方已提前设置，忽略 */ }
 
             // 类库没有 App.xaml，按需创建 WPF Application（提供消息循环）。
             // 若宿主进程已有 Application（如被另一个 WPF 应用调用），则复用它。
@@ -38,6 +50,9 @@ namespace XyzController.WpfHost
                 app = new System.Windows.Application();
 
             MainWindow window = new MainWindow(form);
+
+            // ★ 类库中编程创建的 Application 显式 Show 窗口
+            window.Show();
             return app.Run(window);
         }
 
