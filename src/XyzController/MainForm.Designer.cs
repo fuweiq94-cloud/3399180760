@@ -226,6 +226,7 @@ namespace XyzController
             // 
             // pnlRight
             // 
+            this.pnlRight.AutoScroll = true;
             this.pnlRight.Controls.Add(this.grpCommon);
             this.pnlRight.Controls.Add(this.grpJog);
             this.pnlRight.Controls.Add(this.grpZ);
