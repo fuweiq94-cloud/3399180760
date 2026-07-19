@@ -1,0 +1,16 @@
+<Window x:Class="XyzController.WpfHost.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wf="clr-namespace:XyzController;assembly=XyzController"
+        Title="XYZ 轴控制器 · WPF 宿主"
+        Height="900" Width="1900"
+        MinWidth="1279" MinHeight="662"
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed">
+    <Grid>
+        <!-- WindowsFormsHost 承载 WinForms MainForm -->
+        <!-- 注意：不要在此区域上方放置任何 WPF 元素（Airspace 限制） -->
+        <WindowsFormsHost x:Name="host" />
+    </Grid>
+</Window>

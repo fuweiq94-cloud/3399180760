@@ -367,5 +367,10 @@ namespace XyzController
             else label = "速度：瞬时";
             lblSpeed.Text = label;
         }
+
+        private void trbX_Scroll(object sender, EventArgs e)
+        {
+
+        }
     }
 }

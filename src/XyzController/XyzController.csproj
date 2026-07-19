@@ -3,7 +3,7 @@
      引用 XyzController.Controls 类库（包含 XYView / ZBarView 自定义控件）。 -->
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AssemblyName>XyzController</AssemblyName>
     <RootNamespace>XyzController</RootNamespace>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>

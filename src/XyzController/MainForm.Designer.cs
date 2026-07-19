@@ -101,6 +101,7 @@ namespace XyzController
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.splitMain = new System.Windows.Forms.SplitContainer();
             this.xyView = new XyzController.Controls.XYView();
             this.zBar = new XyzController.Controls.ZBarView();
@@ -148,7 +149,7 @@ namespace XyzController
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblHint = new System.Windows.Forms.ToolStripStatusLabel();
-            this.animTimer = new System.Windows.Forms.Timer();
+            this.animTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
             this.splitMain.Panel1.SuspendLayout();
             this.splitMain.Panel2.SuspendLayout();
@@ -190,8 +191,8 @@ namespace XyzController
             this.splitMain.Panel2.Controls.Add(this.zBar);
             this.splitMain.Panel2.Padding = new System.Windows.Forms.Padding(8, 12, 8, 12);
             this.splitMain.Panel2MinSize = 80;
-            this.splitMain.Size = new System.Drawing.Size(1229, 824);
-            this.splitMain.SplitterDistance = 1145;
+            this.splitMain.Size = new System.Drawing.Size(1284, 824);
+            this.splitMain.SplitterDistance = 1200;
             this.splitMain.TabIndex = 0;
             // 
             // xyView
@@ -205,7 +206,7 @@ namespace XyzController
             this.xyView.Name = "xyView";
             this.xyView.RangeMax = 100F;
             this.xyView.RangeMin = -100F;
-            this.xyView.Size = new System.Drawing.Size(1121, 800);
+            this.xyView.Size = new System.Drawing.Size(1176, 800);
             this.xyView.TabIndex = 0;
             this.xyView.TargetX = 0F;
             this.xyView.TargetY = 0F;
@@ -231,7 +232,7 @@ namespace XyzController
             this.pnlRight.Controls.Add(this.grpY);
             this.pnlRight.Controls.Add(this.grpX);
             this.pnlRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlRight.Location = new System.Drawing.Point(1229, 0);
+            this.pnlRight.Location = new System.Drawing.Point(1284, 0);
             this.pnlRight.Margin = new System.Windows.Forms.Padding(4);
             this.pnlRight.Name = "pnlRight";
             this.pnlRight.Padding = new System.Windows.Forms.Padding(12);
@@ -786,6 +787,7 @@ namespace XyzController
             this.trbX.Size = new System.Drawing.Size(334, 103);
             this.trbX.TabIndex = 1;
             this.trbX.TickFrequency = 10;
+            this.trbX.Scroll += new System.EventHandler(this.trbX_Scroll);
             // 
             // btnXPlus
             // 
@@ -830,14 +832,14 @@ namespace XyzController
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Padding = new System.Windows.Forms.Padding(2, 0, 18, 0);
             this.statusStrip.ShowItemToolTips = true;
-            this.statusStrip.Size = new System.Drawing.Size(1769, 31);
+            this.statusStrip.Size = new System.Drawing.Size(1824, 31);
             this.statusStrip.SizingGrip = false;
             this.statusStrip.TabIndex = 2;
             // 
             // lblStatus
             // 
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(939, 24);
+            this.lblStatus.Size = new System.Drawing.Size(994, 24);
             this.lblStatus.Spring = true;
             this.lblStatus.Text = "就绪";
             this.lblStatus.ToolTipText = "实时坐标";
@@ -858,7 +860,7 @@ namespace XyzController
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1769, 855);
+            this.ClientSize = new System.Drawing.Size(1824, 855);
             this.Controls.Add(this.splitMain);
             this.Controls.Add(this.pnlRight);
             this.Controls.Add(this.statusStrip);
