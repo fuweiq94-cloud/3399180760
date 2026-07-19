@@ -1,28 +1,29 @@
 using System;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Forms.Integration;
-using XyzController;
 
 namespace XyzController.WpfHost
 {
     /// <summary>
     /// WPF 主窗口，通过 WindowsFormsHost 承载 WinForms 窗体。
+    /// 本类为 DLL 内部实现细节（受 XAML 分部类限制必须为 public）；
+    /// 外部调用方请使用公共入口 WpfHostLauncher.Run(...)。
     /// 所有宿主配置集中在 EmbedForm，被嵌入的 Form 源码零改动。
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly Form _embeddedForm;
         private Form _form;
 
-        public MainWindow()
+        public MainWindow(Form embeddedForm)
         {
             InitializeComponent();
+            _embeddedForm = embeddedForm;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // ★ 换窗体只改这一行：EmbedForm(new 你的Form());
-            EmbedForm(new MainForm());
+            EmbedForm(_embeddedForm);
         }
 
         /// <summary>

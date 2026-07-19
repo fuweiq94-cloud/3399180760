@@ -43,6 +43,12 @@
       <Project>{b1c4d7e2-3f6a-4b8c-9d1e-2a5f7b9c8d33}</Project>
       <Name>XyzController.Controls</Name>
     </ProjectReference>
+    <!-- 引用 WPF 宿主接口 DLL：Program.Main 通过 WpfHostLauncher.Run(new MainForm()) 启动。
+         依赖方向单向（XyzController → WpfHost），WpfHost 不引用本项目，无循环引用。 -->
+    <ProjectReference Include="..\XyzController.WpfHost\XyzController.WpfHost.csproj">
+      <Project>{D453FED7-6A20-493D-BFC4-C3CFB6479A8C}</Project>
+      <Name>XyzController.WpfHost</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

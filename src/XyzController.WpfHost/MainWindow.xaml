@@ -1,7 +1,6 @@
 <Window x:Class="XyzController.WpfHost.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:wf="clr-namespace:XyzController;assembly=XyzController"
         Title="XYZ 轴控制器 · WPF 宿主"
         Height="900" Width="1900"
         MinWidth="1279" MinHeight="662"
