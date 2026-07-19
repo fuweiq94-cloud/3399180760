@@ -58,6 +58,18 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PointJumpForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PointJumpForm.Designer.cs">
+      <DependentUpon>PointJumpForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TrajectoryViewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TrajectoryViewForm.Designer.cs">
+      <DependentUpon>TrajectoryViewForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Logic\AxisController.cs" />
     <Compile Include="Logic\XyzControllerHub.cs" />
     <Compile Include="Logic\JogMode.cs" />
@@ -67,6 +79,12 @@
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PointJumpForm.resx">
+      <DependentUpon>PointJumpForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TrajectoryViewForm.resx">
+      <DependentUpon>TrajectoryViewForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <!-- 必需：引入 C# 构建目标。老式（非 SDK 风格）的 .csproj 不会自动加载。 -->
