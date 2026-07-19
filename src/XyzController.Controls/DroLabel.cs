@@ -66,15 +66,19 @@ namespace XyzController.Controls
             Font = new Font("Consolas", 22F, FontStyle.Bold);
             SetStyle(ControlStyles.Selectable, false);
 
-            _flashTimer = new Timer { Interval = 50 };
-            _flashTimer.Tick += (s, e) =>
+            _flashTimer = new Timer();
+            _flashTimer.Interval = 50;
+            // 工控机旧编译器不支持 Lambda，用命名方法 + 委托构造。
+            _flashTimer.Tick += new EventHandler(FlashTimer_Tick);
+        }
+
+        private void FlashTimer_Tick(object sender, EventArgs e)
+        {
+            if ((DateTime.Now - _flashTime).TotalMilliseconds > FlashDuration)
             {
-                if ((DateTime.Now - _flashTime).TotalMilliseconds > FlashDuration)
-                {
-                    _flashTimer.Stop();
-                    Invalidate();
-                }
-            };
+                _flashTimer.Stop();
+                Invalidate();
+            }
         }
 
         public void SetValue(float v)

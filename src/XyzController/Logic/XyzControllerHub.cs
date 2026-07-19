@@ -31,11 +31,18 @@ namespace XyzController.Logic
             Y = new AxisController("Y", yMin, yMax);
             Z = new AxisController("Z", zMin, zMax);
 
-            X.Changed += (s, e) => OnChanged();
-            Y.Changed += (s, e) => OnChanged();
-            Z.Changed += (s, e) => OnChanged();
+            // 工控机旧编译器不支持 Lambda（=>），这里用命名方法 + 委托构造。
+            X.Changed += new EventHandler(ForwardAxisChanged);
+            Y.Changed += new EventHandler(ForwardAxisChanged);
+            Z.Changed += new EventHandler(ForwardAxisChanged);
 
             SpeedSetting = 20;
+        }
+
+        /// <summary>把三个子轴的 Changed 事件转发为 Hub 自身的 Changed。</summary>
+        private void ForwardAxisChanged(object sender, EventArgs e)
+        {
+            OnChanged();
         }
 
         // ============== 批量操作 ==============

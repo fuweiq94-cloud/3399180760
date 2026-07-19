@@ -221,16 +221,16 @@ namespace XyzController.Tests.Tests
         [Test("步长必须 > 0")]
         public void SetStep_ZeroOrNegative_Throws()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => _service.SetStepDistance(0f));
-            Assert.Throws<ArgumentOutOfRangeException>(() => _service.SetStepDistance(-1f));
+            Assert.Throws<ArgumentOutOfRangeException>(delegate { _service.SetStepDistance(0f); });
+            Assert.Throws<ArgumentOutOfRangeException>(delegate { _service.SetStepDistance(-1f); });
         }
 
         [Test("方向必须是 +1 或 -1")]
         public void OnJogStart_InvalidDirection_Throws()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => _service.OnJogStart(0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => _service.OnJogStart(2));
-            Assert.Throws<ArgumentOutOfRangeException>(() => _service.OnJogStart(-2));
+            Assert.Throws<ArgumentOutOfRangeException>(delegate { _service.OnJogStart(0); });
+            Assert.Throws<ArgumentOutOfRangeException>(delegate { _service.OnJogStart(2); });
+            Assert.Throws<ArgumentOutOfRangeException>(delegate { _service.OnJogStart(-2); });
         }
 
         [Test("Axis 属性返回同一对象")]

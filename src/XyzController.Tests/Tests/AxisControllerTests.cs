@@ -50,10 +50,14 @@ namespace XyzController.Tests.Tests
         [Test("范围非法时抛异常")]
         public void Constructor_InvalidRange_Throws()
         {
-            Assert.Throws<ArgumentException>(() =>
-                new AxisController("X", 100f, -100f));
-            Assert.Throws<ArgumentException>(() =>
-                new AxisController("X", 50f, 50f));
+            Assert.Throws<ArgumentException>(delegate
+            {
+                new AxisController("X", 100f, -100f);
+            });
+            Assert.Throws<ArgumentException>(delegate
+            {
+                new AxisController("X", 50f, 50f);
+            });
         }
 
         // ============== SetTarget ==============
@@ -81,7 +85,7 @@ namespace XyzController.Tests.Tests
         public void SetTarget_SameValue_NoEvent()
         {
             bool fired = false;
-            _axis.Changed += (s, e) => fired = true;
+            _axis.Changed += delegate { fired = true; };
             _axis.SetTarget(0f);   // 已经是 0
             Assert.IsFalse(fired, "目标没变时不应触发 Changed");
         }
@@ -213,7 +217,7 @@ namespace XyzController.Tests.Tests
         public void SetTarget_FiresChanged()
         {
             int count = 0;
-            _axis.Changed += (s, e) => count++;
+            _axis.Changed += delegate { count++; };
             _axis.SetTarget(10f);
             Assert.AreEqual(1, count);
 
@@ -226,7 +230,7 @@ namespace XyzController.Tests.Tests
         {
             int count = 0;
             _axis.SetTarget(50f);   // 这次已经触发一次
-            _axis.Changed += (s, e) => count++;
+            _axis.Changed += delegate { count++; };
             _axis.Advance(0.5f);
             Assert.AreEqual(1, count, "推进后应触发一次");
         }

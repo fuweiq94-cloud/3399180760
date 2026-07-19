@@ -145,7 +145,7 @@ namespace XyzController.Tests.Tests
         public void HubChanged_Fires_WhenAxisChanged()
         {
             int count = 0;
-            _hub.Changed += (s, e) => count++;
+            _hub.Changed += delegate { count++; };
 
             _hub.X.SetTarget(10f);
             _hub.Y.SetTarget(20f);
@@ -159,7 +159,7 @@ namespace XyzController.Tests.Tests
         {
             int count = 0;
             _hub.SetTarget(50f, 50f, 50f);
-            _hub.Changed += (s, e) => count++;
+            _hub.Changed += delegate { count++; };
 
             _hub.Advance();
             Assert.AreEqual(3, count, "三轴一起 Advance，hub.Changed 应被触发 3 次（X/Y/Z 各一次）");

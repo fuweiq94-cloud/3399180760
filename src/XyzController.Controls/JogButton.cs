@@ -45,8 +45,15 @@ namespace XyzController.Controls
             BackColor = Color.FromArgb(240, 243, 248);
             SetStyle(ControlStyles.Selectable, true);
 
-            _timer = new Timer { Interval = RepeatInterval };
-            _timer.Tick += (s, e) => OnJog();
+            _timer = new Timer();
+            _timer.Interval = RepeatInterval;
+            // 工控机旧编译器不支持 Lambda，用命名方法 + 委托构造。
+            _timer.Tick += new EventHandler(Timer_Tick);
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            OnJog();
         }
 
         // —— 鼠标交互 ——
