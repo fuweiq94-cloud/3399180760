@@ -20,7 +20,9 @@
     <Optimize>false</Optimize>
     <OutputPath>..\XyzController.WpfHost\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <WarningLevel>5</WarningLevel>
+    <!-- ★ 必须为 0-4：VS2017 编译器不支持 5 及以上（警告波次是 VS2019 16.8+ 特性），
+         否则报 CS1900“警告级别必须在 0 到 4 之间” -->
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugType>pdbonly</DebugType>

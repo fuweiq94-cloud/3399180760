@@ -178,21 +178,23 @@ namespace XyzController
             this.splitMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitMain.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitMain.Location = new System.Drawing.Point(0, 0);
+            this.splitMain.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.splitMain.Name = "splitMain";
             // 
             // splitMain.Panel1
             // 
             this.splitMain.Panel1.Controls.Add(this.xyView);
-            this.splitMain.Panel1.Padding = new System.Windows.Forms.Padding(12);
+            this.splitMain.Panel1.Padding = new System.Windows.Forms.Padding(18, 18, 18, 18);
             this.splitMain.Panel1MinSize = 200;
             // 
             // splitMain.Panel2
             // 
             this.splitMain.Panel2.Controls.Add(this.zBar);
-            this.splitMain.Panel2.Padding = new System.Windows.Forms.Padding(8, 12, 8, 12);
+            this.splitMain.Panel2.Padding = new System.Windows.Forms.Padding(12, 18, 12, 18);
             this.splitMain.Panel2MinSize = 80;
-            this.splitMain.Size = new System.Drawing.Size(1284, 824);
-            this.splitMain.SplitterDistance = 1200;
+            this.splitMain.Size = new System.Drawing.Size(1754, 1251);
+            this.splitMain.SplitterDistance = 1668;
+            this.splitMain.SplitterWidth = 6;
             this.splitMain.TabIndex = 0;
             // 
             // xyView
@@ -201,12 +203,12 @@ namespace XyzController
             this.xyView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.xyView.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.xyView.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(70)))), ((int)(((byte)(90)))));
-            this.xyView.Location = new System.Drawing.Point(12, 12);
-            this.xyView.Margin = new System.Windows.Forms.Padding(4);
+            this.xyView.Location = new System.Drawing.Point(18, 18);
+            this.xyView.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.xyView.Name = "xyView";
             this.xyView.RangeMax = 100F;
             this.xyView.RangeMin = -100F;
-            this.xyView.Size = new System.Drawing.Size(1176, 800);
+            this.xyView.Size = new System.Drawing.Size(1632, 1215);
             this.xyView.TabIndex = 0;
             this.xyView.TargetX = 0F;
             this.xyView.TargetY = 0F;
@@ -215,12 +217,12 @@ namespace XyzController
             // 
             this.zBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(247)))), ((int)(((byte)(250)))));
             this.zBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.zBar.Location = new System.Drawing.Point(8, 12);
-            this.zBar.Margin = new System.Windows.Forms.Padding(4);
+            this.zBar.Location = new System.Drawing.Point(12, 18);
+            this.zBar.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.zBar.Name = "zBar";
             this.zBar.RangeMax = 100F;
             this.zBar.RangeMin = -50F;
-            this.zBar.Size = new System.Drawing.Size(64, 800);
+            this.zBar.Size = new System.Drawing.Size(56, 1215);
             this.zBar.TabIndex = 0;
             this.zBar.TargetZ = 0F;
             // 
@@ -233,22 +235,22 @@ namespace XyzController
             this.pnlRight.Controls.Add(this.grpY);
             this.pnlRight.Controls.Add(this.grpX);
             this.pnlRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlRight.Location = new System.Drawing.Point(1284, 0);
-            this.pnlRight.Margin = new System.Windows.Forms.Padding(4);
+            this.pnlRight.Location = new System.Drawing.Point(1754, 0);
+            this.pnlRight.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.pnlRight.Name = "pnlRight";
-            this.pnlRight.Padding = new System.Windows.Forms.Padding(12);
-            this.pnlRight.Size = new System.Drawing.Size(540, 824);
+            this.pnlRight.Padding = new System.Windows.Forms.Padding(18, 18, 18, 18);
+            this.pnlRight.Size = new System.Drawing.Size(810, 1251);
             this.pnlRight.TabIndex = 1;
             // 
             // grpCommon
             // 
             this.grpCommon.Controls.Add(this.tlpCommon);
             this.grpCommon.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpCommon.Location = new System.Drawing.Point(12, 667);
-            this.grpCommon.Margin = new System.Windows.Forms.Padding(4);
+            this.grpCommon.Location = new System.Drawing.Point(18, 999);
+            this.grpCommon.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.grpCommon.Name = "grpCommon";
-            this.grpCommon.Padding = new System.Windows.Forms.Padding(4);
-            this.grpCommon.Size = new System.Drawing.Size(516, 225);
+            this.grpCommon.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.grpCommon.Size = new System.Drawing.Size(748, 338);
             this.grpCommon.TabIndex = 4;
             this.grpCommon.TabStop = false;
             this.grpCommon.Text = "通用";
@@ -268,23 +270,23 @@ namespace XyzController
             this.tlpCommon.Controls.Add(this.btnRandom, 3, 1);
             this.tlpCommon.Controls.Add(this.cbTrail, 0, 2);
             this.tlpCommon.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpCommon.Location = new System.Drawing.Point(4, 28);
-            this.tlpCommon.Margin = new System.Windows.Forms.Padding(4);
+            this.tlpCommon.Location = new System.Drawing.Point(6, 30);
+            this.tlpCommon.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.tlpCommon.Name = "tlpCommon";
             this.tlpCommon.RowCount = 3;
             this.tlpCommon.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33F));
             this.tlpCommon.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 34F));
             this.tlpCommon.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33F));
-            this.tlpCommon.Size = new System.Drawing.Size(508, 193);
+            this.tlpCommon.Size = new System.Drawing.Size(736, 302);
             this.tlpCommon.TabIndex = 0;
             // 
             // lblSpeed
             // 
             this.lblSpeed.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblSpeed.Location = new System.Drawing.Point(4, 0);
-            this.lblSpeed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSpeed.Location = new System.Drawing.Point(6, 0);
+            this.lblSpeed.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.lblSpeed.Name = "lblSpeed";
-            this.lblSpeed.Size = new System.Drawing.Size(119, 63);
+            this.lblSpeed.Size = new System.Drawing.Size(172, 99);
             this.lblSpeed.TabIndex = 0;
             this.lblSpeed.Text = "速度：中";
             this.lblSpeed.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -293,10 +295,10 @@ namespace XyzController
             // 
             this.tlpCommon.SetColumnSpan(this.trbSpeed, 3);
             this.trbSpeed.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trbSpeed.Location = new System.Drawing.Point(131, 4);
-            this.trbSpeed.Margin = new System.Windows.Forms.Padding(4);
+            this.trbSpeed.Location = new System.Drawing.Point(190, 6);
+            this.trbSpeed.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.trbSpeed.Name = "trbSpeed";
-            this.trbSpeed.Size = new System.Drawing.Size(373, 55);
+            this.trbSpeed.Size = new System.Drawing.Size(540, 87);
             this.trbSpeed.TabIndex = 1;
             this.trbSpeed.TickFrequency = 10;
             this.trbSpeed.Value = 10;
@@ -305,11 +307,11 @@ namespace XyzController
             // 
             this.btnZero.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnZero.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnZero.Location = new System.Drawing.Point(4, 67);
-            this.btnZero.Margin = new System.Windows.Forms.Padding(4);
+            this.btnZero.Location = new System.Drawing.Point(6, 105);
+            this.btnZero.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnZero.Name = "btnZero";
-            this.btnZero.Padding = new System.Windows.Forms.Padding(3);
-            this.btnZero.Size = new System.Drawing.Size(119, 57);
+            this.btnZero.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnZero.Size = new System.Drawing.Size(172, 90);
             this.btnZero.TabIndex = 2;
             this.btnZero.Text = "回原点(0,0,0)";
             this.btnZero.UseVisualStyleBackColor = true;
@@ -318,11 +320,11 @@ namespace XyzController
             // 
             this.btnCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnCenter.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCenter.Location = new System.Drawing.Point(131, 67);
-            this.btnCenter.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCenter.Location = new System.Drawing.Point(190, 105);
+            this.btnCenter.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnCenter.Name = "btnCenter";
-            this.btnCenter.Padding = new System.Windows.Forms.Padding(3);
-            this.btnCenter.Size = new System.Drawing.Size(119, 57);
+            this.btnCenter.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCenter.Size = new System.Drawing.Size(172, 90);
             this.btnCenter.TabIndex = 3;
             this.btnCenter.Text = "居中";
             this.btnCenter.UseVisualStyleBackColor = true;
@@ -331,11 +333,11 @@ namespace XyzController
             // 
             this.btnClearTrail.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnClearTrail.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnClearTrail.Location = new System.Drawing.Point(258, 67);
-            this.btnClearTrail.Margin = new System.Windows.Forms.Padding(4);
+            this.btnClearTrail.Location = new System.Drawing.Point(374, 105);
+            this.btnClearTrail.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnClearTrail.Name = "btnClearTrail";
-            this.btnClearTrail.Padding = new System.Windows.Forms.Padding(3);
-            this.btnClearTrail.Size = new System.Drawing.Size(119, 57);
+            this.btnClearTrail.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnClearTrail.Size = new System.Drawing.Size(172, 90);
             this.btnClearTrail.TabIndex = 4;
             this.btnClearTrail.Text = "清除轨迹";
             this.btnClearTrail.UseVisualStyleBackColor = true;
@@ -344,11 +346,11 @@ namespace XyzController
             // 
             this.btnRandom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnRandom.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnRandom.Location = new System.Drawing.Point(385, 67);
-            this.btnRandom.Margin = new System.Windows.Forms.Padding(4);
+            this.btnRandom.Location = new System.Drawing.Point(558, 105);
+            this.btnRandom.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnRandom.Name = "btnRandom";
-            this.btnRandom.Padding = new System.Windows.Forms.Padding(3);
-            this.btnRandom.Size = new System.Drawing.Size(119, 57);
+            this.btnRandom.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRandom.Size = new System.Drawing.Size(172, 90);
             this.btnRandom.TabIndex = 5;
             this.btnRandom.Text = "随机位置";
             this.btnRandom.UseVisualStyleBackColor = true;
@@ -359,10 +361,10 @@ namespace XyzController
             this.cbTrail.CheckState = System.Windows.Forms.CheckState.Checked;
             this.tlpCommon.SetColumnSpan(this.cbTrail, 4);
             this.cbTrail.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbTrail.Location = new System.Drawing.Point(4, 132);
-            this.cbTrail.Margin = new System.Windows.Forms.Padding(4);
+            this.cbTrail.Location = new System.Drawing.Point(6, 207);
+            this.cbTrail.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.cbTrail.Name = "cbTrail";
-            this.cbTrail.Size = new System.Drawing.Size(500, 57);
+            this.cbTrail.Size = new System.Drawing.Size(724, 89);
             this.cbTrail.TabIndex = 6;
             this.cbTrail.Text = "显示轨迹";
             this.cbTrail.UseVisualStyleBackColor = true;
@@ -371,10 +373,11 @@ namespace XyzController
             // 
             this.grpJog.Controls.Add(this.tlpJog);
             this.grpJog.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpJog.Location = new System.Drawing.Point(12, 417);
+            this.grpJog.Location = new System.Drawing.Point(18, 624);
+            this.grpJog.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpJog.Name = "grpJog";
-            this.grpJog.Padding = new System.Windows.Forms.Padding(4);
-            this.grpJog.Size = new System.Drawing.Size(516, 250);
+            this.grpJog.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.grpJog.Size = new System.Drawing.Size(748, 375);
             this.grpJog.TabIndex = 5;
             this.grpJog.TabStop = false;
             this.grpJog.Text = "JOG 控制（按住按钮移动）";
@@ -382,10 +385,10 @@ namespace XyzController
             // tlpJog
             // 
             this.tlpJog.ColumnCount = 4;
-            this.tlpJog.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tlpJog.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpJog.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpJog.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90F));
+            this.tlpJog.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpJog.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpJog.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 135F));
             this.tlpJog.Controls.Add(this.rbIncremental, 0, 0);
             this.tlpJog.Controls.Add(this.rbContinuous, 1, 0);
             this.tlpJog.Controls.Add(this.lblStep, 2, 0);
@@ -401,24 +404,26 @@ namespace XyzController
             this.tlpJog.Controls.Add(this.jogZMinus, 1, 3);
             this.tlpJog.Controls.Add(this.jogZPlus, 2, 3);
             this.tlpJog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpJog.Location = new System.Drawing.Point(4, 28);
+            this.tlpJog.Location = new System.Drawing.Point(6, 30);
+            this.tlpJog.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tlpJog.Name = "tlpJog";
             this.tlpJog.RowCount = 5;
-            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
             this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33F));
             this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33F));
             this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 34F));
-            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpJog.Size = new System.Drawing.Size(508, 218);
+            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tlpJog.Size = new System.Drawing.Size(736, 339);
             this.tlpJog.TabIndex = 0;
             // 
             // rbIncremental
             // 
             this.rbIncremental.Checked = true;
             this.rbIncremental.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rbIncremental.Location = new System.Drawing.Point(3, 3);
+            this.rbIncremental.Location = new System.Drawing.Point(4, 4);
+            this.rbIncremental.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rbIncremental.Name = "rbIncremental";
-            this.rbIncremental.Size = new System.Drawing.Size(54, 26);
+            this.rbIncremental.Size = new System.Drawing.Size(82, 40);
             this.rbIncremental.TabIndex = 0;
             this.rbIncremental.TabStop = true;
             this.rbIncremental.Text = "寸动";
@@ -428,9 +433,10 @@ namespace XyzController
             // rbContinuous
             // 
             this.rbContinuous.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rbContinuous.Location = new System.Drawing.Point(63, 3);
+            this.rbContinuous.Location = new System.Drawing.Point(94, 4);
+            this.rbContinuous.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.rbContinuous.Name = "rbContinuous";
-            this.rbContinuous.Size = new System.Drawing.Size(173, 26);
+            this.rbContinuous.Size = new System.Drawing.Size(247, 40);
             this.rbContinuous.TabIndex = 1;
             this.rbContinuous.Text = "连续（按住）";
             this.rbContinuous.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -439,9 +445,10 @@ namespace XyzController
             // lblStep
             // 
             this.lblStep.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblStep.Location = new System.Drawing.Point(242, 0);
+            this.lblStep.Location = new System.Drawing.Point(349, 0);
+            this.lblStep.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblStep.Name = "lblStep";
-            this.lblStep.Size = new System.Drawing.Size(173, 32);
+            this.lblStep.Size = new System.Drawing.Size(247, 48);
             this.lblStep.TabIndex = 2;
             this.lblStep.Text = "步长：";
             this.lblStep.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -450,7 +457,8 @@ namespace XyzController
             // 
             this.nudJogStep.DecimalPlaces = 2;
             this.nudJogStep.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.nudJogStep.Location = new System.Drawing.Point(421, 3);
+            this.nudJogStep.Location = new System.Drawing.Point(604, 4);
+            this.nudJogStep.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.nudJogStep.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -462,7 +470,7 @@ namespace XyzController
             0,
             131072});
             this.nudJogStep.Name = "nudJogStep";
-            this.nudJogStep.Size = new System.Drawing.Size(84, 31);
+            this.nudJogStep.Size = new System.Drawing.Size(128, 31);
             this.nudJogStep.TabIndex = 3;
             this.nudJogStep.Value = new decimal(new int[] {
             1,
@@ -478,9 +486,10 @@ namespace XyzController
             this.btnEStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEStop.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnEStop.ForeColor = System.Drawing.Color.White;
-            this.btnEStop.Location = new System.Drawing.Point(3, 180);
+            this.btnEStop.Location = new System.Drawing.Point(4, 282);
+            this.btnEStop.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnEStop.Name = "btnEStop";
-            this.btnEStop.Size = new System.Drawing.Size(502, 35);
+            this.btnEStop.Size = new System.Drawing.Size(728, 53);
             this.btnEStop.TabIndex = 13;
             this.btnEStop.Text = "■ 急停 (E-STOP)";
             this.btnEStop.UseVisualStyleBackColor = false;
@@ -488,9 +497,10 @@ namespace XyzController
             // lblAxisHdrX
             // 
             this.lblAxisHdrX.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAxisHdrX.Location = new System.Drawing.Point(3, 32);
+            this.lblAxisHdrX.Location = new System.Drawing.Point(4, 48);
+            this.lblAxisHdrX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAxisHdrX.Name = "lblAxisHdrX";
-            this.lblAxisHdrX.Size = new System.Drawing.Size(54, 48);
+            this.lblAxisHdrX.Size = new System.Drawing.Size(82, 76);
             this.lblAxisHdrX.TabIndex = 4;
             this.lblAxisHdrX.Text = "X 轴";
             this.lblAxisHdrX.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -503,10 +513,11 @@ namespace XyzController
             this.jogXMinus.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.jogXMinus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(80)))));
             this.jogXMinus.InitialDelay = 400;
-            this.jogXMinus.Location = new System.Drawing.Point(63, 35);
+            this.jogXMinus.Location = new System.Drawing.Point(94, 52);
+            this.jogXMinus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.jogXMinus.Name = "jogXMinus";
             this.jogXMinus.RepeatInterval = 80;
-            this.jogXMinus.Size = new System.Drawing.Size(173, 42);
+            this.jogXMinus.Size = new System.Drawing.Size(247, 68);
             this.jogXMinus.TabIndex = 5;
             this.jogXMinus.Text = "◄ X-";
             // 
@@ -518,19 +529,21 @@ namespace XyzController
             this.jogXPlus.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.jogXPlus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(80)))));
             this.jogXPlus.InitialDelay = 400;
-            this.jogXPlus.Location = new System.Drawing.Point(242, 35);
+            this.jogXPlus.Location = new System.Drawing.Point(349, 52);
+            this.jogXPlus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.jogXPlus.Name = "jogXPlus";
             this.jogXPlus.RepeatInterval = 80;
-            this.jogXPlus.Size = new System.Drawing.Size(173, 42);
+            this.jogXPlus.Size = new System.Drawing.Size(247, 68);
             this.jogXPlus.TabIndex = 6;
             this.jogXPlus.Text = "X+ ►";
             // 
             // lblAxisHdrY
             // 
             this.lblAxisHdrY.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAxisHdrY.Location = new System.Drawing.Point(3, 80);
+            this.lblAxisHdrY.Location = new System.Drawing.Point(4, 124);
+            this.lblAxisHdrY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAxisHdrY.Name = "lblAxisHdrY";
-            this.lblAxisHdrY.Size = new System.Drawing.Size(54, 48);
+            this.lblAxisHdrY.Size = new System.Drawing.Size(82, 76);
             this.lblAxisHdrY.TabIndex = 7;
             this.lblAxisHdrY.Text = "Y 轴";
             this.lblAxisHdrY.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -543,10 +556,11 @@ namespace XyzController
             this.jogYMinus.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.jogYMinus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(80)))));
             this.jogYMinus.InitialDelay = 400;
-            this.jogYMinus.Location = new System.Drawing.Point(63, 83);
+            this.jogYMinus.Location = new System.Drawing.Point(94, 128);
+            this.jogYMinus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.jogYMinus.Name = "jogYMinus";
             this.jogYMinus.RepeatInterval = 80;
-            this.jogYMinus.Size = new System.Drawing.Size(173, 42);
+            this.jogYMinus.Size = new System.Drawing.Size(247, 68);
             this.jogYMinus.TabIndex = 8;
             this.jogYMinus.Text = "▼ Y-";
             // 
@@ -558,19 +572,21 @@ namespace XyzController
             this.jogYPlus.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.jogYPlus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(80)))));
             this.jogYPlus.InitialDelay = 400;
-            this.jogYPlus.Location = new System.Drawing.Point(242, 83);
+            this.jogYPlus.Location = new System.Drawing.Point(349, 128);
+            this.jogYPlus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.jogYPlus.Name = "jogYPlus";
             this.jogYPlus.RepeatInterval = 80;
-            this.jogYPlus.Size = new System.Drawing.Size(173, 42);
+            this.jogYPlus.Size = new System.Drawing.Size(247, 68);
             this.jogYPlus.TabIndex = 9;
             this.jogYPlus.Text = "▲ Y+";
             // 
             // lblAxisHdrZ
             // 
             this.lblAxisHdrZ.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAxisHdrZ.Location = new System.Drawing.Point(3, 128);
+            this.lblAxisHdrZ.Location = new System.Drawing.Point(4, 200);
+            this.lblAxisHdrZ.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAxisHdrZ.Name = "lblAxisHdrZ";
-            this.lblAxisHdrZ.Size = new System.Drawing.Size(54, 49);
+            this.lblAxisHdrZ.Size = new System.Drawing.Size(82, 78);
             this.lblAxisHdrZ.TabIndex = 10;
             this.lblAxisHdrZ.Text = "Z 轴";
             this.lblAxisHdrZ.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -583,10 +599,11 @@ namespace XyzController
             this.jogZMinus.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.jogZMinus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(80)))));
             this.jogZMinus.InitialDelay = 400;
-            this.jogZMinus.Location = new System.Drawing.Point(63, 131);
+            this.jogZMinus.Location = new System.Drawing.Point(94, 204);
+            this.jogZMinus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.jogZMinus.Name = "jogZMinus";
             this.jogZMinus.RepeatInterval = 80;
-            this.jogZMinus.Size = new System.Drawing.Size(173, 43);
+            this.jogZMinus.Size = new System.Drawing.Size(247, 70);
             this.jogZMinus.TabIndex = 11;
             this.jogZMinus.Text = "▽ Z-";
             // 
@@ -598,10 +615,11 @@ namespace XyzController
             this.jogZPlus.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.jogZPlus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(80)))));
             this.jogZPlus.InitialDelay = 400;
-            this.jogZPlus.Location = new System.Drawing.Point(242, 131);
+            this.jogZPlus.Location = new System.Drawing.Point(349, 204);
+            this.jogZPlus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.jogZPlus.Name = "jogZPlus";
             this.jogZPlus.RepeatInterval = 80;
-            this.jogZPlus.Size = new System.Drawing.Size(173, 43);
+            this.jogZPlus.Size = new System.Drawing.Size(247, 70);
             this.jogZPlus.TabIndex = 12;
             this.jogZPlus.Text = "△ Z+";
             // 
@@ -612,11 +630,11 @@ namespace XyzController
             this.grpZ.Controls.Add(this.btnZPlus);
             this.grpZ.Controls.Add(this.nudZ);
             this.grpZ.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpZ.Location = new System.Drawing.Point(12, 282);
-            this.grpZ.Margin = new System.Windows.Forms.Padding(4);
+            this.grpZ.Location = new System.Drawing.Point(18, 422);
+            this.grpZ.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.grpZ.Name = "grpZ";
-            this.grpZ.Padding = new System.Windows.Forms.Padding(4);
-            this.grpZ.Size = new System.Drawing.Size(516, 135);
+            this.grpZ.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.grpZ.Size = new System.Drawing.Size(748, 202);
             this.grpZ.TabIndex = 3;
             this.grpZ.TabStop = false;
             this.grpZ.Text = "Z 轴";
@@ -625,10 +643,10 @@ namespace XyzController
             // 
             this.btnZMinus.Dock = System.Windows.Forms.DockStyle.Left;
             this.btnZMinus.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnZMinus.Location = new System.Drawing.Point(4, 28);
-            this.btnZMinus.Margin = new System.Windows.Forms.Padding(4);
+            this.btnZMinus.Location = new System.Drawing.Point(6, 30);
+            this.btnZMinus.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnZMinus.Name = "btnZMinus";
-            this.btnZMinus.Size = new System.Drawing.Size(84, 103);
+            this.btnZMinus.Size = new System.Drawing.Size(126, 166);
             this.btnZMinus.TabIndex = 0;
             this.btnZMinus.Text = "▽ -1";
             this.btnZMinus.UseVisualStyleBackColor = true;
@@ -636,12 +654,12 @@ namespace XyzController
             // trbZ
             // 
             this.trbZ.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trbZ.Location = new System.Drawing.Point(4, 28);
-            this.trbZ.Margin = new System.Windows.Forms.Padding(4);
+            this.trbZ.Location = new System.Drawing.Point(6, 30);
+            this.trbZ.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.trbZ.Maximum = 100;
             this.trbZ.Minimum = -50;
             this.trbZ.Name = "trbZ";
-            this.trbZ.Size = new System.Drawing.Size(334, 103);
+            this.trbZ.Size = new System.Drawing.Size(475, 166);
             this.trbZ.TabIndex = 1;
             this.trbZ.TickFrequency = 10;
             // 
@@ -649,10 +667,10 @@ namespace XyzController
             // 
             this.btnZPlus.Dock = System.Windows.Forms.DockStyle.Right;
             this.btnZPlus.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnZPlus.Location = new System.Drawing.Point(338, 28);
-            this.btnZPlus.Margin = new System.Windows.Forms.Padding(4);
+            this.btnZPlus.Location = new System.Drawing.Point(481, 30);
+            this.btnZPlus.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnZPlus.Name = "btnZPlus";
-            this.btnZPlus.Size = new System.Drawing.Size(84, 103);
+            this.btnZPlus.Size = new System.Drawing.Size(126, 166);
             this.btnZPlus.TabIndex = 2;
             this.btnZPlus.Text = "+1 △";
             this.btnZPlus.UseVisualStyleBackColor = true;
@@ -661,8 +679,8 @@ namespace XyzController
             // 
             this.nudZ.DecimalPlaces = 2;
             this.nudZ.Dock = System.Windows.Forms.DockStyle.Right;
-            this.nudZ.Location = new System.Drawing.Point(422, 28);
-            this.nudZ.Margin = new System.Windows.Forms.Padding(4);
+            this.nudZ.Location = new System.Drawing.Point(607, 30);
+            this.nudZ.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.nudZ.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -674,7 +692,7 @@ namespace XyzController
             0,
             -2147483648});
             this.nudZ.Name = "nudZ";
-            this.nudZ.Size = new System.Drawing.Size(90, 31);
+            this.nudZ.Size = new System.Drawing.Size(135, 31);
             this.nudZ.TabIndex = 3;
             this.nudZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -685,11 +703,11 @@ namespace XyzController
             this.grpY.Controls.Add(this.btnYPlus);
             this.grpY.Controls.Add(this.nudY);
             this.grpY.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpY.Location = new System.Drawing.Point(12, 147);
-            this.grpY.Margin = new System.Windows.Forms.Padding(4);
+            this.grpY.Location = new System.Drawing.Point(18, 220);
+            this.grpY.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.grpY.Name = "grpY";
-            this.grpY.Padding = new System.Windows.Forms.Padding(4);
-            this.grpY.Size = new System.Drawing.Size(516, 135);
+            this.grpY.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.grpY.Size = new System.Drawing.Size(748, 202);
             this.grpY.TabIndex = 2;
             this.grpY.TabStop = false;
             this.grpY.Text = "Y 轴";
@@ -698,10 +716,10 @@ namespace XyzController
             // 
             this.btnYMinus.Dock = System.Windows.Forms.DockStyle.Left;
             this.btnYMinus.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnYMinus.Location = new System.Drawing.Point(4, 28);
-            this.btnYMinus.Margin = new System.Windows.Forms.Padding(4);
+            this.btnYMinus.Location = new System.Drawing.Point(6, 30);
+            this.btnYMinus.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnYMinus.Name = "btnYMinus";
-            this.btnYMinus.Size = new System.Drawing.Size(84, 103);
+            this.btnYMinus.Size = new System.Drawing.Size(126, 166);
             this.btnYMinus.TabIndex = 0;
             this.btnYMinus.Text = "▼ -1";
             this.btnYMinus.UseVisualStyleBackColor = true;
@@ -709,11 +727,11 @@ namespace XyzController
             // trbY
             // 
             this.trbY.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trbY.Location = new System.Drawing.Point(4, 28);
-            this.trbY.Margin = new System.Windows.Forms.Padding(4);
+            this.trbY.Location = new System.Drawing.Point(6, 30);
+            this.trbY.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.trbY.Maximum = 100;
             this.trbY.Name = "trbY";
-            this.trbY.Size = new System.Drawing.Size(334, 103);
+            this.trbY.Size = new System.Drawing.Size(475, 166);
             this.trbY.TabIndex = 1;
             this.trbY.TickFrequency = 10;
             // 
@@ -721,10 +739,10 @@ namespace XyzController
             // 
             this.btnYPlus.Dock = System.Windows.Forms.DockStyle.Right;
             this.btnYPlus.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnYPlus.Location = new System.Drawing.Point(338, 28);
-            this.btnYPlus.Margin = new System.Windows.Forms.Padding(4);
+            this.btnYPlus.Location = new System.Drawing.Point(481, 30);
+            this.btnYPlus.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnYPlus.Name = "btnYPlus";
-            this.btnYPlus.Size = new System.Drawing.Size(84, 103);
+            this.btnYPlus.Size = new System.Drawing.Size(126, 166);
             this.btnYPlus.TabIndex = 2;
             this.btnYPlus.Text = "+1 ▲";
             this.btnYPlus.UseVisualStyleBackColor = true;
@@ -733,8 +751,8 @@ namespace XyzController
             // 
             this.nudY.DecimalPlaces = 2;
             this.nudY.Dock = System.Windows.Forms.DockStyle.Right;
-            this.nudY.Location = new System.Drawing.Point(422, 28);
-            this.nudY.Margin = new System.Windows.Forms.Padding(4);
+            this.nudY.Location = new System.Drawing.Point(607, 30);
+            this.nudY.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.nudY.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -746,7 +764,7 @@ namespace XyzController
             0,
             -2147483648});
             this.nudY.Name = "nudY";
-            this.nudY.Size = new System.Drawing.Size(90, 31);
+            this.nudY.Size = new System.Drawing.Size(135, 31);
             this.nudY.TabIndex = 3;
             this.nudY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -757,11 +775,11 @@ namespace XyzController
             this.grpX.Controls.Add(this.btnXPlus);
             this.grpX.Controls.Add(this.nudX);
             this.grpX.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpX.Location = new System.Drawing.Point(12, 12);
-            this.grpX.Margin = new System.Windows.Forms.Padding(4);
+            this.grpX.Location = new System.Drawing.Point(18, 18);
+            this.grpX.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.grpX.Name = "grpX";
-            this.grpX.Padding = new System.Windows.Forms.Padding(4);
-            this.grpX.Size = new System.Drawing.Size(516, 135);
+            this.grpX.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.grpX.Size = new System.Drawing.Size(748, 202);
             this.grpX.TabIndex = 1;
             this.grpX.TabStop = false;
             this.grpX.Text = "X 轴";
@@ -770,10 +788,10 @@ namespace XyzController
             // 
             this.btnXMinus.Dock = System.Windows.Forms.DockStyle.Left;
             this.btnXMinus.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnXMinus.Location = new System.Drawing.Point(4, 28);
-            this.btnXMinus.Margin = new System.Windows.Forms.Padding(4);
+            this.btnXMinus.Location = new System.Drawing.Point(6, 30);
+            this.btnXMinus.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnXMinus.Name = "btnXMinus";
-            this.btnXMinus.Size = new System.Drawing.Size(84, 103);
+            this.btnXMinus.Size = new System.Drawing.Size(126, 166);
             this.btnXMinus.TabIndex = 0;
             this.btnXMinus.Text = "◀ -1";
             this.btnXMinus.UseVisualStyleBackColor = true;
@@ -781,11 +799,11 @@ namespace XyzController
             // trbX
             // 
             this.trbX.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trbX.Location = new System.Drawing.Point(4, 28);
-            this.trbX.Margin = new System.Windows.Forms.Padding(4);
+            this.trbX.Location = new System.Drawing.Point(6, 30);
+            this.trbX.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.trbX.Maximum = 100;
             this.trbX.Name = "trbX";
-            this.trbX.Size = new System.Drawing.Size(334, 103);
+            this.trbX.Size = new System.Drawing.Size(475, 166);
             this.trbX.TabIndex = 1;
             this.trbX.TickFrequency = 10;
             this.trbX.Scroll += new System.EventHandler(this.trbX_Scroll);
@@ -794,10 +812,10 @@ namespace XyzController
             // 
             this.btnXPlus.Dock = System.Windows.Forms.DockStyle.Right;
             this.btnXPlus.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnXPlus.Location = new System.Drawing.Point(338, 28);
-            this.btnXPlus.Margin = new System.Windows.Forms.Padding(4);
+            this.btnXPlus.Location = new System.Drawing.Point(481, 30);
+            this.btnXPlus.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnXPlus.Name = "btnXPlus";
-            this.btnXPlus.Size = new System.Drawing.Size(84, 103);
+            this.btnXPlus.Size = new System.Drawing.Size(126, 166);
             this.btnXPlus.TabIndex = 2;
             this.btnXPlus.Text = "+1 ▶";
             this.btnXPlus.UseVisualStyleBackColor = true;
@@ -806,8 +824,8 @@ namespace XyzController
             // 
             this.nudX.DecimalPlaces = 2;
             this.nudX.Dock = System.Windows.Forms.DockStyle.Right;
-            this.nudX.Location = new System.Drawing.Point(422, 28);
-            this.nudX.Margin = new System.Windows.Forms.Padding(4);
+            this.nudX.Location = new System.Drawing.Point(607, 30);
+            this.nudX.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.nudX.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -819,7 +837,7 @@ namespace XyzController
             0,
             -2147483648});
             this.nudX.Name = "nudX";
-            this.nudX.Size = new System.Drawing.Size(90, 31);
+            this.nudX.Size = new System.Drawing.Size(135, 31);
             this.nudX.TabIndex = 3;
             this.nudX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -829,18 +847,18 @@ namespace XyzController
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus,
             this.lblHint});
-            this.statusStrip.Location = new System.Drawing.Point(0, 824);
+            this.statusStrip.Location = new System.Drawing.Point(0, 1251);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Padding = new System.Windows.Forms.Padding(2, 0, 18, 0);
+            this.statusStrip.Padding = new System.Windows.Forms.Padding(3, 0, 27, 0);
             this.statusStrip.ShowItemToolTips = true;
-            this.statusStrip.Size = new System.Drawing.Size(1824, 31);
+            this.statusStrip.Size = new System.Drawing.Size(2564, 31);
             this.statusStrip.SizingGrip = false;
             this.statusStrip.TabIndex = 2;
             // 
             // lblStatus
             // 
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(994, 24);
+            this.lblStatus.Size = new System.Drawing.Size(1724, 24);
             this.lblStatus.Spring = true;
             this.lblStatus.Text = "就绪";
             this.lblStatus.ToolTipText = "实时坐标";
@@ -859,16 +877,16 @@ namespace XyzController
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1824, 855);
+            this.ClientSize = new System.Drawing.Size(2564, 1282);
             this.Controls.Add(this.splitMain);
             this.Controls.Add(this.pnlRight);
             this.Controls.Add(this.statusStrip);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.KeyPreview = true;
-            this.Margin = new System.Windows.Forms.Padding(4);
-            this.MinimumSize = new System.Drawing.Size(1279, 662);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.MinimumSize = new System.Drawing.Size(1908, 965);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "XYZ 轴实时控制器  ·  WinForms  ·  .NET Framework 4.6.1";
