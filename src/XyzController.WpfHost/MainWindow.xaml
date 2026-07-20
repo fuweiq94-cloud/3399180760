@@ -10,8 +10,20 @@
         Loaded="Window_Loaded"
         Closed="Window_Closed">
     <Grid>
-        <!-- WindowsFormsHost 承载 WinForms MainForm -->
+        <Grid.RowDefinitions>
+            <!-- 顶部导航栏 -->
+            <RowDefinition Height="Auto" />
+            <!-- 页面内容区 -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- ===== 顶部导航栏 ===== -->
+        <Border Grid.Row="0" Background="#2D2D30" Padding="8,4">
+            <StackPanel x:Name="navBar" Orientation="Horizontal" />
+        </Border>
+
+        <!-- ===== 页面内容区 ===== -->
         <!-- 注意：不要在此区域上方放置任何 WPF 元素（Airspace 限制） -->
-        <WindowsFormsHost x:Name="host" />
+        <Grid x:Name="contentArea" Grid.Row="1" />
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -65,6 +66,42 @@ namespace XyzController.WpfHost
         public static int Run<TForm>() where TForm : Form, new()
         {
             return Run(new TForm());
+        }
+
+        /// <summary>
+        /// 启动 WPF 宿主并显示多页面导航界面（阻塞式，窗口关闭后返回）。
+        /// 顶部导航栏包含所有页面的选项卡，用户可自由切换。
+        /// </summary>
+        /// <param name="pages">页面列表，每个页面包含标题和 WinForms 窗体</param>
+        /// <returns>WPF 应用程序退出码</returns>
+        /// <remarks>必须在标记了 [STAThread] 的线程中调用。</remarks>
+        public static int Run(IList<WpfPage> pages)
+        {
+            if (pages == null) throw new ArgumentNullException("pages");
+            if (pages.Count == 0) throw new ArgumentException("页面列表不能为空。", "pages");
+
+            // WinForms 与 WPF 都要求 STA 线程模型
+            if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
+                throw new InvalidOperationException(
+                    "WpfHostLauncher.Run 必须在 [STAThread] 线程中调用（请为 Main 方法标注 [STAThread]）。");
+
+            // ★ DPI 感知
+            if (Environment.OSVersion.Version.Major >= 6)
+                SetProcessDPIAware();
+
+            // ★ WinForms 视觉样式
+            System.Windows.Forms.Application.EnableVisualStyles();
+            try { System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false); }
+            catch (InvalidOperationException) { /* 调用方已提前设置，忽略 */ }
+
+            // 创建 WPF Application
+            System.Windows.Application app = System.Windows.Application.Current;
+            if (app == null)
+                app = new System.Windows.Application();
+
+            MainWindow window = new MainWindow(pages);
+            window.Show();
+            return app.Run(window);
         }
     }
 }

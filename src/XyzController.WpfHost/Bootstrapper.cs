@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -32,7 +33,7 @@ namespace XyzController.WpfHost
 
             try
             {
-                // 1. 加载 XyzController.dll 并创建 MainForm
+                // 1. 加载 XyzController.dll 并创建多个窗体作为导航页面
                 string xcDllPath = Path.Combine(exeDir, "XyzController.dll");
                 if (!File.Exists(xcDllPath))
                 {
@@ -45,23 +46,25 @@ namespace XyzController.WpfHost
                 }
 
                 Assembly xcAsm = Assembly.LoadFrom(xcDllPath);
-                Type formType = xcAsm.GetType("XyzController.MainForm");
-                if (formType == null)
+
+                // 创建多页面列表
+                List<object> pages = new List<object>();
+                AddPage(pages, xcAsm, "XyzController.MainForm", "主控制器");
+                AddPage(pages, xcAsm, "XyzController.PointJumpForm", "点位跳转");
+                AddPage(pages, xcAsm, "XyzController.TrajectoryViewForm", "运动轨迹");
+
+                if (pages.Count == 0)
                 {
                     MessageBox.Show(
-                        "XyzController.dll 中未找到 XyzController.MainForm 类型。",
+                        "XyzController.dll 中未找到任何可用的窗体类型。",
                         "XyzController.WpfHost",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                     return 1;
                 }
 
-                Form form = (Form)Activator.CreateInstance(formType);
-
-                // 2. ★ 通过反射加载 WpfHost DLL 并调用 WpfHostLauncher.Run(form)
-                //    不能用编译时引用，因为 EXE 与 DLL 同名（XyzController.WpfHost），
-                //    CLR 会将 EXE 自身当作该程序集，导致 TypeLoadException。
-                return LaunchViaReflection(exeDir, form);
+                // 2. ★ 通过反射加载 WpfHost DLL 并调用 WpfHostLauncher.Run(IList<WpfPage>)
+                return LaunchViaReflection(exeDir, pages);
             }
             catch (Exception ex)
             {
@@ -76,10 +79,26 @@ namespace XyzController.WpfHost
         }
 
         /// <summary>
-        /// 通过反射加载 WpfHost DLL 并调用 WpfHostLauncher.Run(Form)。
+        /// 从程序集中加载指定窗体类型并创建 WpfPage 对象加入列表。
+        /// </summary>
+        private static void AddPage(List<object> pages, Assembly asm, string typeName, string title)
+        {
+            Type formType = asm.GetType(typeName);
+            if (formType == null) return;
+
+            Form form = (Form)Activator.CreateInstance(formType);
+
+            // 通过反射创建 WpfPage（避免编译时引用 WpfHost DLL）
+            // WpfPage 在 WpfHost DLL 中，但 EXE 不能直接引用它
+            // 所以我们直接传 Form 列表和标题列表给 LaunchViaReflection
+            pages.Add(new object[] { title, form });
+        }
+
+        /// <summary>
+        /// 通过反射加载 WpfHost DLL 并调用 WpfHostLauncher.Run(IList&lt;WpfPage&gt;)。
         /// 独立方法确保 JIT 在调用时才解析相关类型。
         /// </summary>
-        private static int LaunchViaReflection(string exeDir, Form form)
+        private static int LaunchViaReflection(string exeDir, List<object> pages)
         {
             string whDllPath = Path.Combine(exeDir, "XyzController.WpfHost.dll");
             if (!File.Exists(whDllPath))
@@ -93,9 +112,27 @@ namespace XyzController.WpfHost
             }
 
             Assembly whAsm = Assembly.LoadFrom(whDllPath);
+
+            // 创建 WpfPage 实例列表
+            Type pageType = whAsm.GetType("XyzController.WpfHost.WpfPage", true);
+            Type listType = typeof(List<>).MakeGenericType(pageType);
+            object pageList = Activator.CreateInstance(listType);
+            MethodInfo addMethod = listType.GetMethod("Add");
+
+            foreach (object item in pages)
+            {
+                object[] pair = (object[])item;
+                string title = (string)pair[0];
+                Form form = (Form)pair[1];
+                object page = Activator.CreateInstance(pageType, title, form);
+                addMethod.Invoke(pageList, new object[] { page });
+            }
+
+            // 调用 WpfHostLauncher.Run(IList<WpfPage>)
             Type launcherType = whAsm.GetType("XyzController.WpfHost.WpfHostLauncher", true);
-            MethodInfo runMethod = launcherType.GetMethod("Run", new[] { typeof(Form) });
-            return (int)runMethod.Invoke(null, new object[] { form });
+            Type ilistType = typeof(IList<>).MakeGenericType(pageType);
+            MethodInfo runMethod = launcherType.GetMethod("Run", new[] { ilistType });
+            return (int)runMethod.Invoke(null, new object[] { pageList });
         }
 
         /// <summary>

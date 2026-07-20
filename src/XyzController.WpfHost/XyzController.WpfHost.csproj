@@ -60,6 +60,7 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WpfPage.cs" />
     <Compile Include="WpfHostLauncher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
