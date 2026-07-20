@@ -1,14 +1,17 @@
 # 知识卡导出索引文件
 schema_version: 1
 locale: zh-CN
-branch: Q0DeR-MaG1C-BrAnCh-Fo2-NoN-GiT-Or-No-C0MmIt
+branch: main
 nodes_managed: true
-exported_at: "2026-07-19T15:26:07Z"
+exported_at: "2026-07-20T16:02:07Z"
 modules:
     "":
-        dir_name: XYZ 轴实时控制器（WinForms 模拟界面）
-        title: XYZ 轴实时控制器（WinForms 模拟界面）
-        scope: []
+        dir_name: XYZ 轴实时控制器（WinForms 解决方案根）
+        title: XYZ 轴实时控制器（WinForms 解决方案根）
+        scope:
+            - README.md
+            - .gitignore
+            - XyzController.sln
         source_files: []
         children: []
         depends_on: []

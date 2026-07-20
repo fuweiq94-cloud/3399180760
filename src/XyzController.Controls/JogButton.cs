@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -11,15 +12,28 @@ namespace XyzController.Controls
     /// 松开：立即触发 Stop 事件。
     /// 常用场景：步进电机连续进给、机械臂点动控制。
     /// </summary>
+    [ToolboxBitmap(typeof(JogButton), "Resources.JogButton.bmp")]
+    [DefaultEvent("Jog")]
+    [DefaultProperty("Direction")]
+    [Description("点动按钮：按住时按间隔重复触发 Jog 事件，松开时触发 Stop 事件。常用于机床 JOG 模式。")]
     public class JogButton : Control
     {
         /// <summary>每按一次持续触发时的方向标识（+1 / -1 或任意对象）。</summary>
+        [Category("Behavior")]
+        [DefaultValue(1)]
+        [Description("持续触发时传递给 Jog/Stop 事件的方向标识（通常 +1 或 -1）。")]
         public int Direction { get; set; }
 
         /// <summary>首次按下后多久开始连续触发（毫秒）。</summary>
+        [Category("Behavior")]
+        [DefaultValue(400)]
+        [Description("首次按下后多久开始连续触发（毫秒）。")]
         public int InitialDelay { get; set; }
 
         /// <summary>连续触发的间隔（毫秒），越小移动越快。</summary>
+        [Category("Behavior")]
+        [DefaultValue(80)]
+        [Description("连续触发的间隔（毫秒），越小移动越快。")]
         public int RepeatInterval { get; set; }
 
         private bool _pressed;
@@ -28,9 +42,13 @@ namespace XyzController.Controls
         private DateTime _pressTime;
 
         /// <summary>每次点动触发（首次按下会立即触发一次，之后按间隔重复）。</summary>
+        [Category("Action")]
+        [Description("按下/连续触发时引发，参数为 Direction。")]
         public event EventHandler<int> Jog;
 
         /// <summary>松开按钮时触发。</summary>
+        [Category("Action")]
+        [Description("松开按钮时引发，参数为 Direction。")]
         public event EventHandler<int> Stop;
 
         public JogButton()

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -10,18 +11,39 @@ namespace XyzController.Controls
     /// XY 平面俯视图控件。
     /// 显示：坐标网格、原点、十字光标、目标点、运动轨迹、鼠标交互拾取。
     /// </summary>
+    [ToolboxBitmap(typeof(XYView), "Resources.XYView.bmp")]
+    [DefaultEvent("TargetSetByMouse")]
+    [DefaultProperty("TargetX")]
+    [Description("XY 平面俯视图：显示坐标网格、目标点、运动轨迹，支持鼠标点击拾取目标坐标。")]
     public class XYView : Control
     {
         // 坐标范围（机械坐标系，单位默认 mm）
+        [Category("Behavior")]
+        [DefaultValue(-100f)]
+        [Description("机械坐标系最小值（mm）。")]
         public float RangeMin { get; set; }
+
+        [Category("Behavior")]
+        [DefaultValue(100f)]
+        [Description("机械坐标系最大值（mm）。")]
         public float RangeMax { get; set; }
 
         // 当前显示的坐标（被动画逐渐逼近 TargetX/TargetY）
+        [Browsable(false)]
         public float CurrentX { get; private set; }
+
+        [Browsable(false)]
         public float CurrentY { get; private set; }
 
         // 目标坐标（滑块/键盘设定）
+        [Category("Data")]
+        [DefaultValue(0f)]
+        [Description("目标 X 坐标（mm）。")]
         public float TargetX { get; set; }
+
+        [Category("Data")]
+        [DefaultValue(0f)]
+        [Description("目标 Y 坐标（mm）。")]
         public float TargetY { get; set; }
 
         // 运动轨迹
@@ -33,6 +55,8 @@ namespace XyzController.Controls
         private bool _hover;
 
         // 当用户通过鼠标点击/拖拽设定新目标时触发
+        [Category("Action")]
+        [Description("用户通过鼠标点击/拖拽设定新目标时触发。")]
         public event EventHandler<PointF> TargetSetByMouse;
 
         public XYView()

@@ -13,13 +13,17 @@ namespace XyzController
     /// 本类只负责：捕获用户输入 → 转发给 hub → 监听 hub 变化 → 刷新控件。
     /// </summary>
     /// <remarks>
-    /// 兼容性说明：工控机上的旧 .NET 编译器不支持 Lambda 表达式 (s,e) => ...
-    /// 因此所有事件订阅都使用命名方法 + 显式委托构造（new EventHandler(...)）。
+    /// 兼容性说明：
+    /// 1. 工控机上的旧 .NET 编译器不支持 Lambda 表达式 (s,e) => ...
+    ///    因此所有事件订阅都使用命名方法 + 显式委托构造（new EventHandler(...)）。
+    /// 2. 所有业务初始化（创建 hub、订阅事件、SyncUiFromHub、动画启动）
+    ///    都放在 OnLoad 里 —— VS 设计器只执行构造函数，跳过 OnLoad，
+    ///    这样设计器不会触发业务逻辑，避免红屏异常。
     /// </remarks>
     public partial class MainForm : Form
     {
-        // —— 业务核心 ——
-        private readonly XyzControllerHub _hub;
+        // —— 业务核心（在 OnLoad 中创建，构造函数里为 null）——
+        private XyzControllerHub _hub;
 
         // —— JOG 服务：每个轴一个 ——
         private AxisJogService[] _jogServices;
@@ -30,6 +34,18 @@ namespace XyzController
         public MainForm()
         {
             InitializeComponent();
+            // ★ 故意留空：业务初始化全部挪到 OnLoad
+            //    （设计器只执行构造函数，不执行 OnLoad，避免红屏）
+        }
+
+        /// <summary>
+        /// 窗体首次加载时触发。VS 设计器不会执行此方法。
+        /// 所有"启动副作用"（业务层创建、范围同步、事件订阅、初始刷新、
+        /// 动画启动、Z 条锁定）都在这里完成。
+        /// </summary>
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
 
             // 1) 创建业务层对象，把 UI 控件的范围同步给它
             _hub = new XyzControllerHub(
@@ -53,19 +69,11 @@ namespace XyzController
             // 5) 初始刷新一次，让 UI 反映 hub 默认状态
             SyncUiFromHub();
             UpdateSpeedLabel();
-        }
 
-        /// <summary>
-        /// 窗体首次加载时触发。设计器不会执行此方法。
-        /// 把"启动副作用"（如定时器、串口、网络）放在这里，比放在构造函数更规范，
-        /// 因为设计器解析构造函数时会跳过 OnLoad，避免在设计器里触发动画/IO。
-        /// </summary>
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+            // 6) 启动动画定时器
             animTimer.Start();
 
-            // 锁定 Z 条宽度：禁止用户拖动分隔条改变 Z 条宽度。
+            // 7) 锁定 Z 条宽度：禁止用户拖动分隔条改变 Z 条宽度。
             splitMain.IsSplitterFixed = true;
             FixSplitterDistance();
             splitMain.SplitterMoved += new SplitterEventHandler(SplitMain_SplitterMoved);
@@ -369,6 +377,11 @@ namespace XyzController
         }
 
         private void trbX_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void xyView_Click(object sender, EventArgs e)
         {
 
         }

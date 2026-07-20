@@ -57,7 +57,19 @@
     <Compile Include="AxisBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ResponsiveLayoutPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <!-- 控件工具箱图标（16x16 BMP，嵌入为资源，供 ToolboxBitmap 特性引用） -->
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\XYView.bmp" />
+    <EmbeddedResource Include="Resources\ZBarView.bmp" />
+    <EmbeddedResource Include="Resources\JogButton.bmp" />
+    <EmbeddedResource Include="Resources\JoystickPad.bmp" />
+    <EmbeddedResource Include="Resources\DroLabel.bmp" />
+    <EmbeddedResource Include="Resources\AxisBar.bmp" />
   </ItemGroup>
   <!-- 必需：引入 C# 构建目标。老式（非 SDK 风格）的 .csproj 不会自动加载。 -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

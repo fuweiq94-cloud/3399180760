@@ -8,7 +8,7 @@ namespace XyzController
     /// <summary>
     /// 程序入口。通过 WPF 宿主接口 DLL（XyzController.WpfHost）启动界面，
     /// 调用方完全不需要接触 WPF 源码与 WPF 类型。WinForms/WPF 都要求 [STAThread]。
-    /// 
+    ///
     /// 命令行参数：
     ///   （无参数）或 nav   → 多页面导航模式（包含所有页面）
     ///   main              → 仅主控制器界面 MainForm
@@ -49,6 +49,8 @@ namespace XyzController
             pages.Add(new WpfPage("主控制器", new MainForm()));
             pages.Add(new WpfPage("点位跳转", new PointJumpForm()));
             pages.Add(new WpfPage("运动轨迹", new TrajectoryViewForm()));
+            pages.Add(new WpfPage("硬件调试", new HardwareForm()));
+
             pages.Add(new WpfPage("sadf", new Form1()));
             pages.Add(new WpfPage("nihao", new Form2()));
             WpfHostLauncher.Run(pages);

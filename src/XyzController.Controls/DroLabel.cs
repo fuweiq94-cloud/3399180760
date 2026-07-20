@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -13,12 +14,21 @@ namespace XyzController.Controls
     /// - 数值变化时短暂高亮（模拟真实 DRO 跳数效果）
     /// - 可设置报警阈值，超过变红
     /// </summary>
+    [ToolboxBitmap(typeof(DroLabel), "Resources.DroLabel.bmp")]
+    [DefaultProperty("Value")]
+    [Description("DRO 数字读数控件：机床/CNC 风格的大字号坐标显示，数值变化时高亮，支持报警阈值。")]
     public class DroLabel : Control
     {
         /// <summary>显示的轴名（如 X / Y / Z）。</summary>
+        [Category("Appearance")]
+        [DefaultValue("X")]
+        [Description("显示的轴名（如 X / Y / Z / U）。")]
         public string AxisName { get; set; }
 
         /// <summary>当前数值。</summary>
+        [Category("Data")]
+        [DefaultValue(0f)]
+        [Description("当前显示的数值。变化 >0.0001 时会触发高亮并重绘。")]
         public float Value
         {
             get { return _value; }
@@ -34,18 +44,33 @@ namespace XyzController.Controls
         }
 
         /// <summary>小数位数。</summary>
+        [Category("Data")]
+        [DefaultValue(3)]
+        [Description("显示的小数位数。")]
         public int Decimals { get; set; }
 
         /// <summary>单位字符串（如 mm / inch）。</summary>
+        [Category("Appearance")]
+        [DefaultValue("mm")]
+        [Description("单位字符串（如 mm / inch / °）。")]
         public string Unit { get; set; }
 
         /// <summary>报警上限，超过则数字变红。设为 null 不检查。</summary>
+        [Category("Behavior")]
+        [DefaultValue(null)]
+        [Description("报警上限。超过时数字变红；设为 null 不检查。")]
         public float? AlarmHigh { get; set; }
 
         /// <summary>报警下限，低于则数字变红。</summary>
+        [Category("Behavior")]
+        [DefaultValue(null)]
+        [Description("报警下限。低于时数字变红；设为 null 不检查。")]
         public float? AlarmLow { get; set; }
 
         /// <summary>数值变化后高亮持续多久（毫秒）。</summary>
+        [Category("Behavior")]
+        [DefaultValue(200)]
+        [Description("数值变化后高亮持续多久（毫秒）。")]
         public int FlashDuration { get; set; }
 
         private float _value;

@@ -14,13 +14,17 @@ namespace XyzController
     /// 捕获用户输入 → 转发给 hub → 监听 hub 变化 → 刷新控件。
     /// </summary>
     /// <remarks>
-    /// 兼容性说明：工控机上的旧 .NET 编译器不支持 Lambda 表达式 (s,e) => ...
-    /// 因此所有事件订阅都使用命名方法 + 显式委托构造（new EventHandler(...)）。
+    /// 兼容性说明：
+    /// 1. 工控机上的旧 .NET 编译器不支持 Lambda 表达式 (s,e) => ...
+    ///    因此所有事件订阅都使用命名方法 + 显式委托构造（new EventHandler(...)）。
+    /// 2. 所有业务初始化（创建 hub、订阅事件、AddDefaultPresets、SyncUiFromHub）
+    ///    都放在 OnLoad 里 —— VS 设计器只执行构造函数，跳过 OnLoad，
+    ///    这样设计器不会触发业务逻辑，避免红屏异常。
     /// </remarks>
     public partial class PointJumpForm : Form
     {
-        // —— 业务核心 ——
-        private readonly XyzControllerHub _hub;
+        // —— 业务核心（在 OnLoad 中创建，构造函数里为 null）——
+        private XyzControllerHub _hub;
 
         // —— UI 同步锁 ——
         private bool _syncing;
@@ -32,6 +36,18 @@ namespace XyzController
         public PointJumpForm()
         {
             InitializeComponent();
+            // ★ 故意留空：业务初始化全部挪到 OnLoad
+            //    （设计器只执行构造函数，不执行 OnLoad，避免红屏）
+        }
+
+        /// <summary>
+        /// 窗体首次加载时触发。VS 设计器不会执行此方法。
+        /// 所有"启动副作用"（业务层创建、事件订阅、预设加载、初始刷新、
+        /// 动画启动）都在这里完成。
+        /// </summary>
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
 
             // 1) 创建业务层（范围与 XYView 一致）
             _hub = new XyzControllerHub(
@@ -52,14 +68,8 @@ namespace XyzController
             // 5) 初始刷新
             SyncUiFromHub();
             UpdateSpeedLabel();
-        }
 
-        /// <summary>
-        /// 窗体首次加载时触发动画定时器。
-        /// </summary>
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+            // 6) 启动动画
             animTimer.Start();
         }
 

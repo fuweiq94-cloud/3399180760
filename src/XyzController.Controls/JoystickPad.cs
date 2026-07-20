@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -10,9 +11,16 @@ namespace XyzController.Controls
     /// 按住中心圆拖动（或鼠标按住任意位置）会输出方向矢量 (dx, dy)，每个分量 ∈ {-1, 0, +1}。
     /// 松开自动回中。可同时按 2 个方向（如右上 = (+1, +1)）。
     /// </summary>
+    [ToolboxBitmap(typeof(JoystickPad), "Resources.JoystickPad.bmp")]
+    [DefaultEvent("DirectionChanged")]
+    [DefaultProperty("DeadZone")]
+    [Description("8 方向虚拟摇杆：拖动输出方向矢量 (dx, dy)，松开自动回中。可同时按 2 个方向。")]
     public class JoystickPad : Control
     {
         // 方向死区：拖动距离超过这个值才算"有方向"
+        [Category("Behavior")]
+        [DefaultValue(0.25f)]
+        [Description("方向死区（归一化位移 0~1），拖动距离超过此值才算有方向输出。")]
         public float DeadZone { get; set; }
 
         private PointF _knob = PointF.Empty;   // 摇杆当前位置（相对中心的偏移）
@@ -20,6 +28,8 @@ namespace XyzController.Controls
         private int _dx, _dy;                   // 当前输出方向 (-1/0/+1)
 
         /// <summary>方向或强度变化时触发。参数为 (dx, dy)。</summary>
+        [Category("Action")]
+        [Description("方向变化时引发。参数 Point(dx, dy)，每个分量 ∈ {-1, 0, +1}，Y 轴已翻转（向上=+1）。")]
         public event EventHandler<Point> DirectionChanged;
 
         public JoystickPad()

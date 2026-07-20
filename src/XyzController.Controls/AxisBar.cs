@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -13,23 +14,53 @@ namespace XyzController.Controls
     /// - 可设置软限位（SoftLimit），超限变红报警
     /// - 当前值数字直接画在指针旁
     /// </summary>
+    [ToolboxBitmap(typeof(AxisBar), "Resources.AxisBar.bmp")]
+    [DefaultProperty("CurrentValue")]
+    [Description("双向轴位置条：正值蓝色/负值橙色填充，支持软限位报警。比 ZBarView 更工业化。")]
     public class AxisBar : Control
     {
         public enum Orientations { Horizontal, Vertical }
 
+        [Category("Appearance")]
+        [DefaultValue(Orientations.Vertical)]
+        [Description("条形方向：Horizontal=水平，Vertical=竖直。")]
         public Orientations Orientation { get; set; }
 
+        [Category("Behavior")]
+        [DefaultValue(-100f)]
+        [Description("数值范围最小值。")]
         public float RangeMin { get; set; }
+
+        [Category("Behavior")]
+        [DefaultValue(100f)]
+        [Description("数值范围最大值。")]
         public float RangeMax { get; set; }
+
+        [Category("Data")]
+        [DefaultValue(0f)]
+        [Description("当前值。正值显示蓝色，负值显示橙色。")]
         public float CurrentValue { get; set; }
+
+        [Category("Data")]
+        [DefaultValue(0f)]
+        [Description("目标值（保留属性，OnPaint 未直接绘制）。")]
         public float TargetValue { get; set; }
 
         /// <summary>软限位（正方向），超过变红。null = 不检查。</summary>
+        [Category("Behavior")]
+        [DefaultValue(null)]
+        [Description("正方向软限位。超过时变红报警；null = 不检查。")]
         public float? SoftLimitPositive { get; set; }
 
         /// <summary>软限位（负方向），低于变红。</summary>
+        [Category("Behavior")]
+        [DefaultValue(null)]
+        [Description("负方向软限位。低于时变红报警；null = 不检查。")]
         public float? SoftLimitNegative { get; set; }
 
+        [Category("Appearance")]
+        [DefaultValue("X")]
+        [Description("轴标签文字。")]
         public string AxisLabel { get; set; }
 
         public AxisBar()

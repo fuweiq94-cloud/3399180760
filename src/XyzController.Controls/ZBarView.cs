@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -8,12 +9,29 @@ namespace XyzController.Controls
     /// <summary>
     /// 竖直进度条样式的 Z 轴指示控件。
     /// 显示：刻度、当前 Z 值、目标 Z 值标记。
+    /// 也可用于 U 轴等其他单轴指示（设置 TargetZ 即可）。
     /// </summary>
+    [ToolboxBitmap(typeof(ZBarView), "Resources.ZBarView.bmp")]
+    [DefaultProperty("TargetZ")]
+    [Description("竖直条形轴指示控件：显示刻度、当前值、目标值标记。常用于 Z 轴或 U 轴。")]
     public class ZBarView : Control
     {
+        [Category("Behavior")]
+        [DefaultValue(-50f)]
+        [Description("轴范围最小值（mm 或 °）。")]
         public float RangeMin { get; set; }
+
+        [Category("Behavior")]
+        [DefaultValue(100f)]
+        [Description("轴范围最大值（mm 或 °）。")]
         public float RangeMax { get; set; }
+
+        [Browsable(false)]
         public float CurrentZ { get; private set; }
+
+        [Category("Data")]
+        [DefaultValue(0f)]
+        [Description("目标位置（mm 或 °）。")]
         public float TargetZ { get; set; }
 
         public ZBarView()
