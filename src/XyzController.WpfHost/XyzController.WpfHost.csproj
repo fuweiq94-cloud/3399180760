@@ -70,15 +70,18 @@
   <Target Name="BeforeBuild" />
   <Target Name="AfterBuild" />
   <!-- 后置构建目标：将 Bootstrapper.cs 编译为独立 EXE。
-       ★ EXE 不引用 WpfHost DLL（避免同名程序集冲突），
-       运行时通过反射加载 WpfHost DLL 并调用 WpfHostLauncher.Run()。 -->
+       ★ 关键：EXE 的 AssemblyName 必须不同于 DLL（不能都叫 XyzController.WpfHost），
+         否则 CLR 把 EXE 自身当作同名程序集，业务代码引用 WpfHostLauncher 时会抛 TypeLoadException。
+       ★ 方案：让 EXE 文件名不同 → AssemblyName 自然不同。
+         EXE 文件名为 XyzController.WpfHost.Bootstrapper.exe（"Bootstrapper" 后缀），
+         业务部署时复制 WpfHost.exe + WpfHost.dll + 业务 dll 一起。 -->
   <Target Name="BuildExe" AfterTargets="Build">
     <Csc Sources="$(MSBuildProjectDirectory)\Bootstrapper.cs"
          References="@(ReferencePath)"
-         OutputAssembly="$(TargetDir)$(AssemblyName).exe"
+         OutputAssembly="$(TargetDir)$(AssemblyName).Launcher.exe"
          TargetType="winexe"
          LangVersion="latest"
          EmitDebugInformation="$(DebugSymbols)" />
-    <Message Importance="high" Text="已生成独立 EXE → $(TargetDir)$(AssemblyName).exe" />
+    <Message Importance="high" Text="已生成独立启动器 EXE → $(TargetDir)$(AssemblyName).Launcher.exe" />
   </Target>
 </Project>
