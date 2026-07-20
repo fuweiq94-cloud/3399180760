@@ -50,6 +50,7 @@ namespace XyzController
             pages.Add(new WpfPage("点位跳转", new PointJumpForm()));
             pages.Add(new WpfPage("运动轨迹", new TrajectoryViewForm()));
             pages.Add(new WpfPage("sadf", new Form1()));
+            pages.Add(new WpfPage("nihao", new Form2()));
             WpfHostLauncher.Run(pages);
         }
     }
