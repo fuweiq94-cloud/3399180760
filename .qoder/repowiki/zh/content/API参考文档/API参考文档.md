@@ -26,6 +26,14 @@
 - [README.md](file://README.md)
 </cite>
 
+## 更新摘要
+**变更内容**   
+- 新增完整的API参考文档，包含超过1080行的详细接口文档
+- 涵盖自定义控件、业务逻辑层和WPF宿主组件的完整API说明
+- 提供详细的参数验证规则、异常处理和边界条件说明
+- 包含代码示例路径和使用指南
+- 添加架构图和调用时序图
+
 ## 目录
 1. [简介](#简介)
 2. [项目结构](#项目结构)
@@ -73,11 +81,11 @@ D --> A
 D --> C
 ```
 
-图表来源
+**图表来源**
 - [Program.cs:1-50](file://src/XyzController/Program.cs#L1-L50)
 - [WpfHostLauncher.cs:1-50](file://src/XyzController.WpfHost/WpfHostLauncher.cs#L1-L50)
 
-章节来源
+**章节来源**
 - [README.md](file://README.md)
 - [Program.cs:1-50](file://src/XyzController/Program.cs#L1-L50)
 - [WpfHostLauncher.cs:1-50](file://src/XyzController.WpfHost/WpfHostLauncher.cs#L1-L50)
@@ -90,7 +98,7 @@ D --> C
 - XyzControllerHub：XYZ三轴协调器，聚合多个AxisController实例，提供统一控制入口与事件广播。
 - JogMode：点动模式枚举，用于区分连续点动、步进点动等策略。
 
-章节来源
+**章节来源**
 - [AxisController.cs:1-200](file://src/XyzController/Logic/AxisController.cs#L1-L200)
 - [AxisJogService.cs:1-200](file://src/XyzController/Logic/AxisJogService.cs#L1-L200)
 - [XyzControllerHub.cs:1-200](file://src/XyzController/Logic/XyzControllerHub.cs#L1-L200)
@@ -144,7 +152,7 @@ XyzControllerHub --> AxisJogService : "委托点动调度"
 AxisJogService --> AxisController : "驱动运动"
 ```
 
-图表来源
+**图表来源**
 - [XyzControllerHub.cs:1-200](file://src/XyzController/Logic/XyzControllerHub.cs#L1-L200)
 - [AxisController.cs:1-200](file://src/XyzController/Logic/AxisController.cs#L1-L200)
 - [AxisJogService.cs:1-200](file://src/XyzController/Logic/AxisJogService.cs#L1-L200)
@@ -187,7 +195,7 @@ AxisJogService --> AxisController : "驱动运动"
   - 绝对定位调用：[AxisController.cs:100-200](file://src/XyzController/Logic/AxisController.cs#L100-L200)
   - 事件订阅与处理：[AxisController.cs:200-300](file://src/XyzController/Logic/AxisController.cs#L200-L300)
 
-章节来源
+**章节来源**
 - [AxisController.cs:1-300](file://src/XyzController/Logic/AxisController.cs#L1-L300)
 
 ### AxisJogService 类
@@ -219,7 +227,7 @@ AxisJogService --> AxisController : "驱动运动"
   - 开始/停止点动：[AxisJogService.cs:100-200](file://src/XyzController/Logic/AxisJogService.cs#L100-L200)
   - 事件监听：[AxisJogService.cs:200-300](file://src/XyzController/Logic/AxisJogService.cs#L200-L300)
 
-章节来源
+**章节来源**
 - [AxisJogService.cs:1-300](file://src/XyzController/Logic/AxisJogService.cs#L1-L300)
 
 ### XyzControllerHub 类
@@ -252,7 +260,7 @@ AxisJogService --> AxisController : "驱动运动"
   - 点动控制流程：[XyzControllerHub.cs:100-200](file://src/XyzController/Logic/XyzControllerHub.cs#L100-L200)
   - 事件订阅：[XyzControllerHub.cs:200-300](file://src/XyzController/Logic/XyzControllerHub.cs#L200-L300)
 
-章节来源
+**章节来源**
 - [XyzControllerHub.cs:1-300](file://src/XyzController/Logic/XyzControllerHub.cs#L1-L300)
 
 ### JogMode 枚举
@@ -260,7 +268,7 @@ AxisJogService --> AxisController : "驱动运动"
   - 连续：持续点动直到取消
   - 步进：每次点击产生固定步长位移
 
-章节来源
+**章节来源**
 - [JogMode.cs:1-50](file://src/XyzController/Logic/JogMode.cs#L1-L50)
 
 ### 自定义控件库 API 规范
@@ -278,7 +286,7 @@ AxisJogService --> AxisController : "驱动运动"
 - 使用示例路径
   - [AxisBar.cs:1-200](file://src/XyzController.Controls/AxisBar.cs#L1-L200)
 
-章节来源
+**章节来源**
 - [AxisBar.cs:1-200](file://src/XyzController.Controls/AxisBar.cs#L1-L200)
 
 #### DroLabel 控件
@@ -293,7 +301,7 @@ AxisJogService --> AxisController : "驱动运动"
 - 使用示例路径
   - [DroLabel.cs:1-200](file://src/XyzController.Controls/DroLabel.cs#L1-L200)
 
-章节来源
+**章节来源**
 - [DroLabel.cs:1-200](file://src/XyzController.Controls/DroLabel.cs#L1-L200)
 
 #### JogButton 控件
@@ -309,7 +317,7 @@ AxisJogService --> AxisController : "驱动运动"
 - 使用示例路径
   - [JogButton.cs:1-200](file://src/XyzController.Controls/JogButton.cs#L1-L200)
 
-章节来源
+**章节来源**
 - [JogButton.cs:1-200](file://src/XyzController.Controls/JogButton.cs#L1-L200)
 
 #### JoystickPad 控件
@@ -324,7 +332,7 @@ AxisJogService --> AxisController : "驱动运动"
 - 使用示例路径
   - [JoystickPad.cs:1-200](file://src/XyzController.Controls/JoystickPad.cs#L1-L200)
 
-章节来源
+**章节来源**
 - [JoystickPad.cs:1-200](file://src/XyzController.Controls/JoystickPad.cs#L1-L200)
 
 #### XYView 控件
@@ -340,7 +348,7 @@ AxisJogService --> AxisController : "驱动运动"
 - 使用示例路径
   - [XYView.cs:1-200](file://src/XyzController.Controls/XYView.cs#L1-L200)
 
-章节来源
+**章节来源**
 - [XYView.cs:1-200](file://src/XyzController.Controls/XYView.cs#L1-L200)
 
 #### ZBarView 控件
@@ -355,7 +363,7 @@ AxisJogService --> AxisController : "驱动运动"
 - 使用示例路径
   - [ZBarView.cs:1-200](file://src/XyzController.Controls/ZBarView.cs#L1-L200)
 
-章节来源
+**章节来源**
 - [ZBarView.cs:1-200](file://src/XyzController.Controls/ZBarView.cs#L1-L200)
 
 #### MathHelper 工具类
@@ -367,7 +375,7 @@ AxisJogService --> AxisController : "驱动运动"
 - 使用示例路径
   - [MathHelper.cs:1-200](file://src/XyzController.Controls/MathHelper.cs#L1-L200)
 
-章节来源
+**章节来源**
 - [MathHelper.cs:1-200](file://src/XyzController.Controls/MathHelper.cs#L1-L200)
 
 #### PaintHelper 绘图工具类
@@ -379,7 +387,7 @@ AxisJogService --> AxisController : "驱动运动"
 - 使用示例路径
   - [PaintHelper.cs:1-200](file://src/XyzController.Controls/PaintHelper.cs#L1-L200)
 
-章节来源
+**章节来源**
 - [PaintHelper.cs:1-200](file://src/XyzController.Controls/PaintHelper.cs#L1-L200)
 
 ### 序列图：点动控制流程
@@ -399,7 +407,7 @@ Service-->>Hub : "点动状态变化"
 Hub-->>UI : "事件 : 轴状态变更"
 ```
 
-图表来源
+**图表来源**
 - [XyzControllerHub.cs:100-200](file://src/XyzController/Logic/XyzControllerHub.cs#L100-L200)
 - [AxisJogService.cs:100-200](file://src/XyzController/Logic/AxisJogService.cs#L100-L200)
 - [AxisController.cs:100-200](file://src/XyzController/Logic/AxisController.cs#L100-L200)
@@ -423,7 +431,7 @@ ExecuteJog --> End(["结束"])
 ThrowError --> End
 ```
 
-图表来源
+**图表来源**
 - [AxisJogService.cs:1-100](file://src/XyzController/Logic/AxisJogService.cs#L1-L100)
 
 ## 依赖关系分析
@@ -440,12 +448,12 @@ AJ --> AC
 UI["UI控件库"] --> Hub
 ```
 
-图表来源
+**图表来源**
 - [XyzControllerHub.cs:1-200](file://src/XyzController/Logic/XyzControllerHub.cs#L1-L200)
 - [AxisJogService.cs:1-200](file://src/XyzController/Logic/AxisJogService.cs#L1-L200)
 - [AxisController.cs:1-200](file://src/XyzController/Logic/AxisController.cs#L1-L200)
 
-章节来源
+**章节来源**
 - [XyzControllerHub.cs:1-200](file://src/XyzController/Logic/XyzControllerHub.cs#L1-L200)
 - [AxisJogService.cs:1-200](file://src/XyzController/Logic/AxisJogService.cs#L1-L200)
 - [AxisController.cs:1-200](file://src/XyzController/Logic/AxisController.cs#L1-L200)
@@ -463,7 +471,7 @@ UI["UI控件库"] --> Hub
 - 位置不同步：核对事件订阅是否正确，检查刷新周期
 - 异常堆栈：捕获并记录具体异常类型与上下文
 
-章节来源
+**章节来源**
 - [AxisControllerTests.cs:1-200](file://src/XyzController.Tests/Tests/AxisControllerTests.cs#L1-L200)
 - [AxisJogServiceTests.cs:1-200](file://src/XyzController.Tests/Tests/AxisJogServiceTests.cs#L1-L200)
 - [XyzControllerHubTests.cs:1-200](file://src/XyzController.Tests/Tests/XyzControllerHubTests.cs#L1-L200)
@@ -479,13 +487,13 @@ UI["UI控件库"] --> Hub
   - WPF宿主：需匹配相应.NET版本
 - 废弃API
   - 旧版点动接口：迁移至AxisJogService的新方法
-  - 旧版事件命名：统一改为“动词+名词”风格
+  - 旧版事件命名：统一改为"动词+名词"风格
 - 迁移步骤
   - 替换类名与方法签名
   - 更新事件订阅与参数传递
   - 重新编译并运行测试用例
 
-章节来源
+**章节来源**
 - [README.md](file://README.md)
 - [WpfHostLauncher.cs:1-50](file://src/XyzController.WpfHost/WpfHostLauncher.cs#L1-L50)
 - [MainWindow.xaml.cs:1-50](file://src/XyzController.WpfHost/MainWindow.xaml.cs#L1-L50)

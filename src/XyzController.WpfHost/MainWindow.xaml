@@ -1,6 +1,7 @@
-<!-- 说明：Width/Height/MinWidth/MinHeight 仅为首轮布局用的占位值，
-     Window_Loaded 时会按嵌入 Form 的设计器尺寸（AutoScale 缩放后的
-     ClientSize / MinimumSize）自动重新计算并覆盖，业务方无需关心。 -->
+<!-- 说明：Width/Height/MinWidth/MinHeight 仅为首轮布局用的占位值。
+     Window_Loaded 时按全部页面设计尺寸（AutoScale 缩放后的 ClientSize /
+     MinimumSize）的并集最大值适配一次并覆盖；之后切换页面窗口尺寸保持
+     稳定不再变化，业务方无需关心。 -->
 <Window x:Class="XyzController.WpfHost.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

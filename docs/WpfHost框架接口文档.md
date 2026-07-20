@@ -118,8 +118,8 @@ namespace MyProject
 - 业务项目输出类型可以是 Library（DLL），由 Launcher 反射调用。
 - 导航栏按钮数量 = `pages` 列表长度，无上限，完全由业务方决定。
 - 每个 `WpfPage` 的 `Form` 会被自动设置为 `TopLevel=false`、无边框、`Dock=Fill`，业务方无需手动处理。
-- **窗口尺寸自动适配**：框架会在嵌入前强制完成 Form 的 AutoScale（Dpi/Font）缩放，读取其「独立运行时」的 `ClientSize` 与 `MinimumSize`，并将 WPF 窗口的尺寸与最小尺寸自动调整到与设计器一致。业务方在 VS 设计器里把界面设计成多大，WPF 宿主里显示就是多大，无需任何适配代码。
-- **多页面模式下窗口尺寸跟随当前激活页面**：切换导航页时，窗口会自动调整到该页 Form 的设计器尺寸（保持窗口中心不漂移）。这是有意设计——各页面设计尺寸往往不同，若固定为最大页面尺寸，小页面内的 Anchor 布局会被拉伸走样。
+- **窗口尺寸启动时适配一次，之后保持稳定**：框架会在嵌入前强制完成各 Form 的 AutoScale（Dpi/Font）缩放，读取其「独立运行时」的 `ClientSize` 与 `MinimumSize`，启动时按全部页面设计尺寸的并集最大值调整一次窗口（含最小尺寸约束）。切换页面只做显隐切换，窗口尺寸/位置绝不再变化（无跳动、无闪烁）。
+- **页面布局规范**：页面以 `Dock=Fill` 弹性填充内容区。DIY Form 应使用 Dock / Anchor / TableLayoutPanel / SplitContainer + AutoScroll 等弹性布局（以 MainForm、TrajectoryViewForm、PointJumpForm 为范例），即可在任意窗口尺寸下保持与设计器一致的结构；纯绝对定位的页面会在大窗口中右下留白（属正常表现）。
 - Form 设计尺寸超出屏幕工作区时，窗口会被钳制到屏幕大小（由 Form 内部 AutoScroll 兜底）；用户主动最大化窗口时不做强制调整。
 
 ### 3.3 命令行参数
@@ -150,14 +150,14 @@ Launcher.exe 启动后：
 
 MainWindow 的 XAML 中导航栏只是一个空的 `StackPanel`，按钮在 `Window_Loaded` 时由 `BuildNavigation()` 根据 `_pages` 列表循环生成。切换页面通过 `WindowsFormsHost.Visibility` 控制显隐。
 
-### 4.3 设计器尺寸保持机制
+### 4.3 窗口尺寸一次适配机制
 
-为避免「VS 设计器布局与 WPF 宿主运行时不一致」，框架在 `Window_Loaded` 时执行以下流程：
+为避免「VS 设计器布局与 WPF 宿主运行时不一致」，同时保证切换页面时窗口绝对稳定（无跳动/闪烁），框架在 `Window_Loaded` 时执行以下一次性流程：
 
 1. **嵌入前捕获真实尺寸**：对每个 Form 先调用 `CreateControl()` 强制创建句柄，触发 WinForms 的 AutoScale（Dpi/Font）缩放，然后读取缩放后的 `ClientSize` / `MinimumSize`（即 Form 独立运行时的真实尺寸）。此操作不会显示窗口，`Load`/`Shown` 事件仍在 `form.Show()` 时才触发。
 2. **像素 → DIU 换算**：WinForms 用物理像素，WPF 用 96-DPI 设备无关单位（DIU）。框架通过 `Graphics.DpiX / 96` 得到系统 DPI 缩放系数进行换算（进程已声明 `SetProcessDPIAware`，读到的是真实 DPI）。
-3. **窗口适配（跟随当前页）**：`窗口尺寸 = 当前页 Form 客户区(DIU) + 实测非内容区`（标题栏 + 边框 + 导航栏，通过 `ActualWidth - contentArea.ActualWidth` 实测），并用当前页 Form 的 `MinimumSize` 设置窗口 `MinWidth/MinHeight`。每个页面的尺寸独立记录，切换页面时重新适配（`SwitchPage` → `FitWindowToPage`）。
-4. **位置保持与钳制**：尺寸调整时保持窗口中心不漂移（首次适配居中到屏幕）；目标尺寸超出屏幕工作区时钳制到工作区，并同步放宽最小尺寸约束；窗口处于最大化状态时跳过适配。
+3. **聚合一次适配（`FitWindowOnce`）**：取全部页面客户区尺寸的逐分量最大值，`窗口尺寸 = 最大客户区(DIU) + 实测非内容区`（标题栏 + 边框 + 导航栏，通过 `ActualWidth - contentArea.ActualWidth` 实测）；窗口 `MinWidth/MinHeight` 取各页 `MinimumSize` 的并集最大值换算。适配只在启动时执行一次，之后 `SwitchPage` 只做 `Visibility` 显隐切换，绝不 resize 窗口。
+4. **居中与钳制**：适配后窗口居中到屏幕工作区；目标尺寸超出工作区时钳制，并同步放宽最小尺寸约束；窗口处于最大化状态时跳过适配。
 
 `MainWindow.xaml` 中的 `Width/Height/MinWidth/MinHeight` 仅为首轮布局的占位值，运行时会被上述逻辑覆盖。
 

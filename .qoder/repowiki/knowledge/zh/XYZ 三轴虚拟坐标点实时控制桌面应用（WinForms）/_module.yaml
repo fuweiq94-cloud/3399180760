@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: ""
-title: XYZ 轴实时控制器（WinForms 解决方案根）
+title: XYZ 三轴虚拟坐标点实时控制桌面应用（WinForms）
 scope:
     - README.md
     - .gitignore

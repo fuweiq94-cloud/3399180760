@@ -122,6 +122,7 @@ namespace XyzController
             this.pnlRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(235)))), ((int)(((byte)(242)))));
             this.pnlRight.Controls.Add(this.zBar);
             this.pnlRight.Controls.Add(this.uBar);
+            this.pnlRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlRight.Location = new System.Drawing.Point(0, 0);
             this.pnlRight.Name = "pnlRight";
             this.pnlRight.Size = new System.Drawing.Size(184, 540);
