@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using MainModule;
+using ProcessModules;
 
 namespace InterfaceDefine
 {
@@ -77,6 +78,19 @@ namespace InterfaceDefine
 
         /// <summary>释放（复位）模组报警。</summary>
         public abstract bool ReleaseAlarm();
+
+        // ============== 平台集成：后端运动服务注入 ==============
+
+        /// <summary>
+        /// 注入/替换后端运动控制服务（供上位机平台对接）。
+        /// 默认空实现；持有 XyzControllerHub 的模组应重写此方法，
+        /// 将服务注入自己的 Hub（_hub.SetService(service)）。
+        /// 平台可通过 ProcessModuleManager.InjectServiceToAll 一次性注入所有模组。
+        /// </summary>
+        /// <param name="service">后端运动控制服务实现（IMotionService）。</param>
+        public virtual void SetMotionService(IMotionService service)
+        {
+        }
 
         // ============== 供子类使用的辅助方法 ==============
 

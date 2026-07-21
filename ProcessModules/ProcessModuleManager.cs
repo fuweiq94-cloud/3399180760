@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using InterfaceDefine;
+using MainModule;
 using ProcessModules.MainControl;
 using ProcessModules.PointJump;
 using ProcessModules.Trajectory;
@@ -82,6 +84,36 @@ namespace ProcessModules
                 ok = kv.Value.Close() && ok;
             _initialized = false;
             return ok;
+        }
+
+        // ============== 平台集成入口（上位机对接）==============
+
+        /// <summary>
+        /// 向所有已注册模组注入后端运动控制服务（上位机平台运动控制对接入口）。
+        /// 平台实现 IMotionService 后调用此方法即可打通全部模组的运动控制。
+        /// </summary>
+        public static void InjectServiceToAll(IMotionService service)
+        {
+            foreach (KeyValuePair<string, ProcessModuleBase> kv in _modules)
+                kv.Value.SetMotionService(service);
+        }
+
+        /// <summary>
+        /// 为所有已注册模组统一订阅报警事件（上位机平台报警系统对接入口）。
+        /// </summary>
+        public static void SubscribeAlarms(EventHandler<ModuleAlarmEventArgs> handler)
+        {
+            foreach (KeyValuePair<string, ProcessModuleBase> kv in _modules)
+                kv.Value.AlarmOccurred += handler;
+        }
+
+        /// <summary>
+        /// 取消所有模组的报警事件订阅。
+        /// </summary>
+        public static void UnsubscribeAlarms(EventHandler<ModuleAlarmEventArgs> handler)
+        {
+            foreach (KeyValuePair<string, ProcessModuleBase> kv in _modules)
+                kv.Value.AlarmOccurred -= handler;
         }
     }
 }

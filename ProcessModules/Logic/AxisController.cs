@@ -116,6 +116,21 @@ namespace ProcessModules
         // ============== 后端反馈 ==============
 
         /// <summary>
+        /// 运行时修改轴范围（由设置界面保存后调用，无需改源码）。
+        /// 修改后当前值和目标值会自动限制到新范围内。
+        /// </summary>
+        public void SetRange(float min, float max)
+        {
+            if (max <= min) return;
+            Min = min;
+            Max = max;
+            // 把当前值和目标值限制到新范围
+            Current = MathHelper.Clamp(Current, Min, Max);
+            Target = MathHelper.Clamp(Target, Min, Max);
+            OnChanged();
+        }
+
+        /// <summary>
         /// 由后端服务更新实际位置（严禁前端直接调用）。
         /// 当 IMotionService 推送位置反馈时，Hub 调用此方法将真实值写入 Current。
         /// </summary>

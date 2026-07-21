@@ -66,6 +66,7 @@
     <Compile Include="Logic\AxisJogService.cs" />
     <Compile Include="Logic\AxisPosition.cs" />
     <Compile Include="Logic\IMotionService.cs" />
+    <Compile Include="Logic\PlatformMotionService.cs" />
     <Compile Include="Logic\JogMode.cs" />
     <Compile Include="Logic\MotionCommand.cs" />
     <Compile Include="Logic\XyzControllerHub.cs" />

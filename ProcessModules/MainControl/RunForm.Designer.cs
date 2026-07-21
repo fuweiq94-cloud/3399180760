@@ -709,6 +709,7 @@ namespace ProcessModules.MainControl
             this.trbY.Location = new System.Drawing.Point(6, 30);
             this.trbY.Margin = new System.Windows.Forms.Padding(6);
             this.trbY.Maximum = 100;
+            this.trbY.Minimum = -100;
             this.trbY.Name = "trbY";
             this.trbY.Size = new System.Drawing.Size(475, 166);
             this.trbY.TabIndex = 1;
@@ -781,6 +782,7 @@ namespace ProcessModules.MainControl
             this.trbX.Location = new System.Drawing.Point(6, 30);
             this.trbX.Margin = new System.Windows.Forms.Padding(6);
             this.trbX.Maximum = 100;
+            this.trbX.Minimum = -100;
             this.trbX.Name = "trbX";
             this.trbX.Size = new System.Drawing.Size(475, 166);
             this.trbX.TabIndex = 1;

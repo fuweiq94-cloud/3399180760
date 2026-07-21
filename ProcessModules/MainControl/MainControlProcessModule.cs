@@ -35,6 +35,13 @@ namespace ProcessModules.MainControl
         /// <summary>模组持有的 XYZ 控制器（集成现有业务层）。</summary>
         public XyzControllerHub Hub { get { return _hub; } }
 
+        /// <summary>注入/替换后端运动控制服务（转发到内部 Hub，供上位机平台对接）。</summary>
+        public override void SetMotionService(IMotionService service)
+        {
+            if (_hub != null)
+                _hub.SetService(service);
+        }
+
         public override dynamic FunctionCaller
         {
             get { return this; }
@@ -165,6 +172,9 @@ namespace ProcessModules.MainControl
 
                 globalSetting.Save();
                 projectSetting.Save();
+
+                // 保存后立即应用新范围到 Hub 和运行界面（无需改源码）
+                ApplyRanges();
             }
             catch (Exception ex)
             {
@@ -172,6 +182,19 @@ namespace ProcessModules.MainControl
                 return false;
             }
             return true;
+        }
+
+        /// <summary>将全局参数中的轴范围应用到 Hub 和运行界面（设置界面保存后自动调用）。</summary>
+        private void ApplyRanges()
+        {
+            if (_hub != null)
+                _hub.SetAxisRanges(
+                    globalSetting.XMin, globalSetting.XMax,
+                    globalSetting.YMin, globalSetting.YMax,
+                    globalSetting.ZMin, globalSetting.ZMax,
+                    globalSetting.UMin, globalSetting.UMax);
+            if (runForm != null && !runForm.IsDisposed)
+                runForm.ApplyRanges();
         }
 
         /// <summary>显示工艺模组运行界面（DOMO 模式：RunForm 持有模组引用）。</summary>

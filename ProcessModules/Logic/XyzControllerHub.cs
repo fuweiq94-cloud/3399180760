@@ -218,6 +218,20 @@ namespace ProcessModules
                 new float[] { X.Target, Y.Target, Z.Target, U.Target }, _speedSetting));
         }
 
+        /// <summary>
+        /// 运行时修改四轴范围（由设置界面保存后调用，无需改源码）。
+        /// </summary>
+        public void SetAxisRanges(float xMin, float xMax,
+                                  float yMin, float yMax,
+                                  float zMin, float zMax,
+                                  float uMin, float uMax)
+        {
+            X.SetRange(xMin, xMax);
+            Y.SetRange(yMin, yMax);
+            Z.SetRange(zMin, zMax);
+            U.SetRange(uMin, uMax);
+        }
+
         // ============== 内部工具 ==============
 
         private void ForEachAxis(Action<AxisController> action)

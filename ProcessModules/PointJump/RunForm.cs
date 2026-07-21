@@ -197,6 +197,19 @@ namespace ProcessModules.PointJump
             finally { _syncing = false; }
         }
 
+        // ============== 范围同步（设置界面保存后由模组调用）==============
+
+        /// <summary>从模组全局参数同步轴范围到视图控件。</summary>
+        public void ApplyRanges()
+        {
+            PointJumpGlobalSetting gs = _module.globalSetting;
+            xyView.XMin = gs.XMin;
+            xyView.XMax = gs.XMax;
+            xyView.YMin = gs.YMin;
+            xyView.YMax = gs.YMax;
+            xyView.Invalidate();
+        }
+
         // ============== 动画 Tick ==============
 
         private void animTimer_Tick(object sender, EventArgs e)

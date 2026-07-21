@@ -17,16 +17,42 @@ namespace ProcessModules
     [Description("XY 平面俯视图：显示坐标网格、目标点、运动轨迹，支持鼠标点击拾取目标坐标。")]
     public class XYView : Control
     {
-        // 坐标范围（机械坐标系，单位默认 mm）
+        // 坐标范围（机械坐标系，单位默认 mm）—— X/Y 轴可独立设置
         [Category("Behavior")]
         [DefaultValue(-100f)]
-        [Description("机械坐标系最小值（mm）。")]
-        public float RangeMin { get; set; }
+        [Description("X 轴左限（mm）。")]
+        public float XMin { get; set; }
 
         [Category("Behavior")]
         [DefaultValue(100f)]
-        [Description("机械坐标系最大值（mm）。")]
-        public float RangeMax { get; set; }
+        [Description("X 轴右限（mm）。")]
+        public float XMax { get; set; }
+
+        [Category("Behavior")]
+        [DefaultValue(-100f)]
+        [Description("Y 轴下限（mm）。")]
+        public float YMin { get; set; }
+
+        [Category("Behavior")]
+        [DefaultValue(100f)]
+        [Description("Y 轴上限（mm）。")]
+        public float YMax { get; set; }
+
+        /// <summary>统一设置 X/Y 范围（向后兼容）。</summary>
+        [Browsable(false)]
+        public float RangeMin
+        {
+            get { return XMin; }
+            set { XMin = value; YMin = value; }
+        }
+
+        /// <summary>统一设置 X/Y 范围（向后兼容）。</summary>
+        [Browsable(false)]
+        public float RangeMax
+        {
+            get { return XMax; }
+            set { XMax = value; YMax = value; }
+        }
 
         // 当前显示的坐标（被动画逐渐逼近 TargetX/TargetY）
         [Browsable(false)]
@@ -61,8 +87,10 @@ namespace ProcessModules
 
         public XYView()
         {
-            RangeMin = -100f;
-            RangeMax = 100f;
+            XMin = -100f;
+            XMax = 100f;
+            YMin = -100f;
+            YMax = 100f;
             DoubleBuffered = true;          // 关键：避免重绘闪烁
             ResizeRedraw = true;
             BackColor = Color.FromArgb(245, 247, 250);
@@ -76,12 +104,14 @@ namespace ProcessModules
         private PointF ToScreen(float mx, float my)
         {
             RectangleF area = DrawableArea;
-            float span = RangeMax - RangeMin;
-            if (span <= 0) span = 1;
+            float spanX = XMax - XMin;
+            float spanY = YMax - YMin;
+            if (spanX <= 0) spanX = 1;
+            if (spanY <= 0) spanY = 1;
 
-            float sx = area.Left + (mx - RangeMin) / span * area.Width;
+            float sx = area.Left + (mx - XMin) / spanX * area.Width;
             // Y 轴要翻转（屏幕坐标向下为正，数学坐标向上为正）
-            float sy = area.Bottom - (my - RangeMin) / span * area.Height;
+            float sy = area.Bottom - (my - YMin) / spanY * area.Height;
             return new PointF(sx, sy);
         }
 
@@ -89,11 +119,13 @@ namespace ProcessModules
         private PointF ToMachine(float sx, float sy)
         {
             RectangleF area = DrawableArea;
-            float span = RangeMax - RangeMin;
-            if (span <= 0) span = 1;
+            float spanX = XMax - XMin;
+            float spanY = YMax - YMin;
+            if (spanX <= 0) spanX = 1;
+            if (spanY <= 0) spanY = 1;
 
-            float mx = RangeMin + (sx - area.Left) / area.Width * span;
-            float my = RangeMin + (area.Bottom - sy) / area.Height * span;
+            float mx = XMin + (sx - area.Left) / area.Width * spanX;
+            float my = YMin + (area.Bottom - sy) / area.Height * spanY;
             return new PointF(mx, my);
         }
 
@@ -177,8 +209,10 @@ namespace ProcessModules
 
         private void DrawGrid(Graphics g, RectangleF area)
         {
-            float span = RangeMax - RangeMin;
-            int step = PaintHelper.ChooseStep(span, 10);
+            float spanX = XMax - XMin;
+            float spanY = YMax - YMin;
+            int stepX = PaintHelper.ChooseStep(spanX, 10);
+            int stepY = PaintHelper.ChooseStep(spanY, 10);
             using (Pen p = new Pen(Color.FromArgb(220, 224, 230), 1f))
             using (Pen pMajor = new Pen(Color.FromArgb(200, 206, 214), 1.4f))
             using (Brush tb = new SolidBrush(Color.FromArgb(120, 130, 145)))
@@ -188,30 +222,35 @@ namespace ProcessModules
                 sf.Alignment = StringAlignment.Far;
                 sf.LineAlignment = StringAlignment.Center;
 
-                for (float v = RangeMin; v <= RangeMax + 0.01f; v += step)
+                // 竖线（X 方向）
+                for (float v = XMin; v <= XMax + 0.01f; v += stepX)
                 {
-                    bool major = Math.Abs(v % (step * 2)) < 0.01f || Math.Abs(v) < 0.01f;
+                    bool major = Math.Abs(v % (stepX * 2)) < 0.01f || Math.Abs(v) < 0.01f;
                     Pen pen = (Math.Abs(v) < 0.01f) ? null : (major ? pMajor : p);
 
-                    // 竖线（X = v）
-                    PointF top = ToScreen(v, RangeMax);
-                    PointF bot = ToScreen(v, RangeMin);
+                    PointF top = ToScreen(v, YMax);
+                    PointF bot = ToScreen(v, YMin);
                     if (pen != null) g.DrawLine(pen, top, bot);
 
-                    // 横线（Y = v）
-                    PointF lft = ToScreen(RangeMin, v);
-                    PointF rgt = ToScreen(RangeMax, v);
+                    if (major)
+                        g.DrawString(v.ToString("0"), f, tb, bot.X, area.Bottom + 6f, sf);
+                }
+
+                // 横线（Y 方向）
+                StringFormat sf2 = new StringFormat();
+                sf2.Alignment = StringAlignment.Far;
+                sf2.LineAlignment = StringAlignment.Center;
+                for (float v = YMin; v <= YMax + 0.01f; v += stepY)
+                {
+                    bool major = Math.Abs(v % (stepY * 2)) < 0.01f || Math.Abs(v) < 0.01f;
+                    Pen pen = (Math.Abs(v) < 0.01f) ? null : (major ? pMajor : p);
+
+                    PointF lft = ToScreen(XMin, v);
+                    PointF rgt = ToScreen(XMax, v);
                     if (pen != null) g.DrawLine(pen, lft, rgt);
 
-                    // 刻度文字
                     if (major)
-                    {
-                        g.DrawString(v.ToString("0"), f, tb, bot.X, area.Bottom + 6f, sf);
-                        StringFormat sf2 = new StringFormat();
-                        sf2.Alignment = StringAlignment.Far;
-                        sf2.LineAlignment = StringAlignment.Center;
                         g.DrawString(v.ToString("0"), f, tb, area.Left - 4f, lft.Y, sf2);
-                    }
                 }
             }
         }
@@ -347,14 +386,9 @@ namespace ProcessModules
         private void SetTargetFromPixel(float sx, float sy)
         {
             PointF m = ToMachine(sx, sy);
-            TargetX = Clamp(m.X);
-            TargetY = Clamp(m.Y);
+            TargetX = MathHelper.Clamp(m.X, XMin, XMax);
+            TargetY = MathHelper.Clamp(m.Y, YMin, YMax);
             OnTargetSetByMouse(new PointF(TargetX, TargetY));
-        }
-
-        private float Clamp(float v)
-        {
-            return MathHelper.Clamp(v, RangeMin, RangeMax);
         }
 
         protected virtual void OnTargetSetByMouse(PointF p)

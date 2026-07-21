@@ -346,6 +346,22 @@ namespace ProcessModules.MainControl
             finally { _syncing = false; }
         }
 
+        // ============== 范围同步（设置界面保存后由模组调用）==============
+
+        /// <summary>从模组全局参数同步轴范围到视图控件（无需改源码）。</summary>
+        public void ApplyRanges()
+        {
+            MainControlGlobalSetting gs = _module.globalSetting;
+            xyView.XMin = gs.XMin;
+            xyView.XMax = gs.XMax;
+            xyView.YMin = gs.YMin;
+            xyView.YMax = gs.YMax;
+            zBar.RangeMin = gs.ZMin;
+            zBar.RangeMax = gs.ZMax;
+            xyView.Invalidate();
+            zBar.Invalidate();
+        }
+
         // ============== 定时刷新 ==============
         private void animTimer_Tick(object sender, EventArgs e)
         {

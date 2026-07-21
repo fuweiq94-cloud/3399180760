@@ -13,10 +13,10 @@ namespace ProcessModules.MainControl
     {
         public string name;
 
-        // —— 轴范围（与 MainForm 设计器默认范围一致：X/Y 0~100，Z -50~100）——
-        public float XMin = 0f;
+        // —— 轴范围（与 PointJump/Trajectory 一致：X/Y -100~100，Z/U -50~100）——
+        public float XMin = -100f;
         public float XMax = 100f;
-        public float YMin = 0f;
+        public float YMin = -100f;
         public float YMax = 100f;
         public float ZMin = -50f;
         public float ZMax = 100f;
