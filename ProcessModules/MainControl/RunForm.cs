@@ -1,15 +1,13 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using XyzController.Controls;
-using XyzController.Logic;
 
-namespace XyzController
+namespace ProcessModules.MainControl
 {
     /// <summary>
-    /// 主窗体（纯 UI 层）。
-    /// 不再包含任何"算坐标/算动画"的业务逻辑，
-    /// 所有状态都委托给 XyzControllerHub（业务层）。
+    /// 主控制工艺模组运行界面（对应 DOMO 模板中的 RunForm，纯 UI 层）。
+    /// 不包含任何"算坐标/算动画"的业务逻辑，
+    /// 所有状态都委托给所属模组的 XyzControllerHub（业务层）。
     /// 本类只负责：捕获用户输入 → 转发给 hub → 监听 hub 变化 → 刷新控件。
     /// </summary>
     /// <remarks>
@@ -20,9 +18,12 @@ namespace XyzController
     ///    都放在 OnLoad 里 —— VS 设计器只执行构造函数，跳过 OnLoad，
     ///    这样设计器不会触发业务逻辑，避免红屏异常。
     /// </remarks>
-    public partial class MainForm : Form
+    public partial class RunForm : Form
     {
-        // —— 业务核心（在 OnLoad 中创建，构造函数里为 null）——
+        // —— 所属工艺模组（DOMO 模式：new RunForm(this)，业务核心从模组获取）——
+        private readonly MainControlProcessModule _module;
+
+        // —— 业务核心（OnLoad 中从模组获取）——
         private XyzControllerHub _hub;
 
         // —— JOG 服务：每个轴一个 ——
@@ -31,8 +32,13 @@ namespace XyzController
         // —— UI 同步锁：防止 hub.Changed 回调里又改 UI 触发新事件 ——
         private bool _syncing;
 
-        public MainForm()
+        /// <summary>
+        /// DOMO 模式构造：由所属工艺模组创建运行界面（new RunForm(this)）。
+        /// </summary>
+        /// <param name="module">所属主控制工艺模组。</param>
+        public RunForm(MainControlProcessModule module)
         {
+            _module = module;
             InitializeComponent();
             // ★ 故意留空：业务初始化全部挪到 OnLoad
             //    （设计器只执行构造函数，不执行 OnLoad，避免红屏）
@@ -47,13 +53,9 @@ namespace XyzController
         {
             base.OnLoad(e);
 
-            // 1) 创建业务层对象，把 UI 控件的范围同步给它
-            _hub = new XyzControllerHub(
-                trbX.Minimum, trbX.Maximum,
-                trbY.Minimum, trbY.Maximum,
-                trbZ.Minimum, trbZ.Maximum,
-                trbU.Minimum, trbU.Maximum);
-            _hub.SpeedSetting = trbSpeed.Value;
+            // 1) 从所属工艺模组获取业务层（模组持有 Hub，界面与其共享）
+            _hub = _module.Hub;
+            trbSpeed.Value = MathHelper.Clamp(_hub.SpeedSetting, trbSpeed.Minimum, trbSpeed.Maximum);
 
             // 2) 同步自定义视图的范围（XYView/ZBarView 自己维护坐标范围）
             xyView.RangeMin = trbX.Minimum;
@@ -107,17 +109,15 @@ namespace XyzController
         private void HookEvents()
         {
             // —— 滑块、数字框、按钮（全部用命名方法 + 委托构造）——
-            trbX.Tag = _hub.X; trbY.Tag = _hub.Y; trbZ.Tag = _hub.Z; trbU.Tag = _hub.U;
+            trbX.Tag = _hub.X; trbY.Tag = _hub.Y; trbZ.Tag = _hub.Z;
             trbX.Scroll += new EventHandler(Trb_Scroll);
             trbY.Scroll += new EventHandler(Trb_Scroll);
             trbZ.Scroll += new EventHandler(Trb_Scroll);
-            trbU.Scroll += new EventHandler(Trb_Scroll);
 
-            nudX.Tag = _hub.X; nudY.Tag = _hub.Y; nudZ.Tag = _hub.Z; nudU.Tag = _hub.U;
+            nudX.Tag = _hub.X; nudY.Tag = _hub.Y; nudZ.Tag = _hub.Z;
             nudX.ValueChanged += new EventHandler(Nud_ValueChanged);
             nudY.ValueChanged += new EventHandler(Nud_ValueChanged);
             nudZ.ValueChanged += new EventHandler(Nud_ValueChanged);
-            nudU.ValueChanged += new EventHandler(Nud_ValueChanged);
 
             btnXMinus.Tag = new object[] { _hub.X, -1 };
             btnXPlus.Tag  = new object[] { _hub.X, +1 };
@@ -125,16 +125,12 @@ namespace XyzController
             btnYPlus.Tag  = new object[] { _hub.Y, +1 };
             btnZMinus.Tag = new object[] { _hub.Z, -1 };
             btnZPlus.Tag  = new object[] { _hub.Z, +1 };
-            btnUMinus.Tag = new object[] { _hub.U, -1 };
-            btnUPlus.Tag  = new object[] { _hub.U, +1 };
             btnXMinus.Click += new EventHandler(BtnStep_Click);
             btnXPlus.Click  += new EventHandler(BtnStep_Click);
             btnYMinus.Click += new EventHandler(BtnStep_Click);
             btnYPlus.Click  += new EventHandler(BtnStep_Click);
             btnZMinus.Click += new EventHandler(BtnStep_Click);
             btnZPlus.Click  += new EventHandler(BtnStep_Click);
-            btnUMinus.Click += new EventHandler(BtnStep_Click);
-            btnUPlus.Click  += new EventHandler(BtnStep_Click);
 
             // —— 通用按钮 ——
             btnZero.Click      += new EventHandler(BtnZero_Click);
@@ -144,13 +140,12 @@ namespace XyzController
 
             trbSpeed.Scroll += new EventHandler(TrbSpeed_Scroll);
 
-            // —— JOG 服务：四轴各创建一个 ——
+            // —— JOG 服务：三轴各创建一个 ——
             _jogServices = new AxisJogService[]
             {
                 new AxisJogService(_hub.X),
                 new AxisJogService(_hub.Y),
-                new AxisJogService(_hub.Z),
-                new AxisJogService(_hub.U)
+                new AxisJogService(_hub.Z)
             };
 
             // 寸动 / 连续模式切换
@@ -168,8 +163,6 @@ namespace XyzController
             BindJogButton(jogYMinus, _jogServices[1]);
             BindJogButton(jogZPlus, _jogServices[2]);
             BindJogButton(jogZMinus, _jogServices[2]);
-            BindJogButton(jogUPlus, _jogServices[3]);
-            BindJogButton(jogUMinus, _jogServices[3]);
 
             // 急停按钮
             btnEStop.Click += new EventHandler(BtnEStop_Click);
@@ -178,7 +171,7 @@ namespace XyzController
             xyView.TargetSetByMouse += new EventHandler<PointF>(XyView_TargetSetByMouse);
 
             // —— 键盘 ——
-            this.KeyDown += new KeyEventHandler(MainForm_KeyDown);
+            this.KeyDown += new KeyEventHandler(RunForm_KeyDown);
         }
 
         // —— hub 变化 → 刷新 UI ——
@@ -285,7 +278,7 @@ namespace XyzController
             service.OnJogStop();
         }
 
-        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        private void RunForm_KeyDown(object sender, KeyEventArgs e)
         {
             int big = e.Shift ? 10 : 1;
             bool handled = true;
@@ -310,10 +303,6 @@ namespace XyzController
                 case Keys.PageUp:
                 case Keys.E:
                     _hub.Z.Step(+big); break;
-                case Keys.F:
-                    _hub.U.Step(-big); break;
-                case Keys.R:
-                    _hub.U.Step(+big); break;
                 case Keys.Space:
                     _hub.ResetToOrigin(); break;
                 case Keys.Escape:
@@ -339,7 +328,6 @@ namespace XyzController
                 trbX.Value = MathHelper.Clamp((int)Math.Round(_hub.X.Target), trbX.Minimum, trbX.Maximum);
                 trbY.Value = MathHelper.Clamp((int)Math.Round(_hub.Y.Target), trbY.Minimum, trbY.Maximum);
                 trbZ.Value = MathHelper.Clamp((int)Math.Round(_hub.Z.Target), trbZ.Minimum, trbZ.Maximum);
-                trbU.Value = MathHelper.Clamp((int)Math.Round(_hub.U.Target), trbU.Minimum, trbU.Maximum);
 
                 // 数字框（支持小数）
                 if (nudX.Value != (decimal)_hub.X.Target)
@@ -348,8 +336,6 @@ namespace XyzController
                     nudY.Value = MathHelper.Clamp((decimal)_hub.Y.Target, nudY.Minimum, nudY.Maximum);
                 if (nudZ.Value != (decimal)_hub.Z.Target)
                     nudZ.Value = MathHelper.Clamp((decimal)_hub.Z.Target, nudZ.Minimum, nudZ.Maximum);
-                if (nudU.Value != (decimal)_hub.U.Target)
-                    nudU.Value = MathHelper.Clamp((decimal)_hub.U.Target, nudU.Minimum, nudU.Maximum);
 
                 // 自定义视图：目标和当前都同步
                 xyView.TargetX = _hub.X.Target;
@@ -360,15 +346,13 @@ namespace XyzController
             finally { _syncing = false; }
         }
 
-        // ============== 动画 Tick ==============
+        // ============== 定时刷新 ==============
         private void animTimer_Tick(object sender, EventArgs e)
         {
-            // 推进业务层的动画
-            _hub.Advance();
-
-            // 让自定义视图按当前值重画
-            xyView.Advance(_hub.CurrentLerpFraction);
-            zBar.Advance(_hub.CurrentLerpFraction);
+            // 位置由后端服务实时推送，无需模拟推进。
+            // 定时器仅用于周期性刷新视图（将后端报告的实际位置显示到控件）。
+            xyView.UpdateActual(_hub.X.Current, _hub.Y.Current);
+            zBar.UpdateActual(_hub.Z.Current);
 
             UpdateStatusLive();
         }
@@ -377,9 +361,9 @@ namespace XyzController
         private void UpdateStatusLive()
         {
             lblStatus.Text = string.Format(
-                "当前 X={0:F2}  Y={1:F2}  Z={2:F2}  U={3:F2}   →  目标 X={4:F2}  Y={5:F2}  Z={6:F2}  U={7:F2}",
-                _hub.X.Current, _hub.Y.Current, _hub.Z.Current, _hub.U.Current,
-                _hub.X.Target, _hub.Y.Target, _hub.Z.Target, _hub.U.Target);
+                "当前 X={0:F2}  Y={1:F2}  Z={2:F2}   →  目标 X={3:F2}  Y={4:F2}  Z={5:F2}",
+                _hub.X.Current, _hub.Y.Current, _hub.Z.Current,
+                _hub.X.Target, _hub.Y.Target, _hub.Z.Target);
         }
 
         private void UpdateSpeedLabel()

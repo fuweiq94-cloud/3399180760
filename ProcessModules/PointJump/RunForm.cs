@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using XyzController.Controls;
-using XyzController.Logic;
-
-namespace XyzController
+namespace ProcessModules.PointJump
 {
     /// <summary>
-    /// 点位跳转窗体（纯 UI 层）。
-    /// 用于工控机点位跳转操作：输入目标坐标或从预设列表选取，一键跳转。
-    /// 所有运动逻辑委托给 XyzControllerHub（业务层），本类只负责：
+    /// 点位跳转工艺模组运行界面（对应 DOMO 模板中的 RunForm，纯 UI 层）。
+    /// 用于点位跳转操作：输入目标坐标或从预设列表选取，一键跳转。
+    /// 所有运动逻辑委托给所属模组的 XyzControllerHub（业务层），本类只负责：
     /// 捕获用户输入 → 转发给 hub → 监听 hub 变化 → 刷新控件。
     /// </summary>
     /// <remarks>
@@ -21,20 +18,29 @@ namespace XyzController
     ///    都放在 OnLoad 里 —— VS 设计器只执行构造函数，跳过 OnLoad，
     ///    这样设计器不会触发业务逻辑，避免红屏异常。
     /// </remarks>
-    public partial class PointJumpForm : Form
+    public partial class RunForm : Form
     {
-        // —— 业务核心（在 OnLoad 中创建，构造函数里为 null）——
+        // —— 所属工艺模组（DOMO 模式：new RunForm(this)，业务核心与点位从模组获取）——
+        private readonly PointJumpProcessModule _module;
+
+        // —— 业务核心（OnLoad 中从模组获取）——
         private XyzControllerHub _hub;
 
         // —— UI 同步锁 ——
         private bool _syncing;
 
-        // —— 预设点位列表（纯 UI 数据）——
-        private readonly List<PresetPoint> _presets = new List<PresetPoint>();
+        // —— 预设点位列表（与工艺模组项目参数共享同一实例）——
+        private readonly List<PresetPoint> _presets;
         private int _presetCounter;
 
-        public PointJumpForm()
+        /// <summary>
+        /// DOMO 模式构造：由所属工艺模组创建运行界面（new RunForm(this)）。
+        /// </summary>
+        /// <param name="module">所属点位跳转工艺模组。</param>
+        public RunForm(PointJumpProcessModule module)
         {
+            _module = module;
+            _presets = module.projectSetting.Presets;
             InitializeComponent();
             // ★ 故意留空：业务初始化全部挪到 OnLoad
             //    （设计器只执行构造函数，不执行 OnLoad，避免红屏）
@@ -49,13 +55,9 @@ namespace XyzController
         {
             base.OnLoad(e);
 
-            // 1) 创建业务层（范围与 XYView 一致）
-            _hub = new XyzControllerHub(
-                xyView.RangeMin, xyView.RangeMax,
-                xyView.RangeMin, xyView.RangeMax,
-                -50f, 100f,
-                -50f, 100f);
-            _hub.SpeedSetting = trbSpeed.Value;
+            // 1) 从所属工艺模组获取业务层（模组持有 Hub，界面与其共享）
+            _hub = _module.Hub;
+            trbSpeed.Value = MathHelper.Clamp(_hub.SpeedSetting, trbSpeed.Minimum, trbSpeed.Maximum);
 
             // 2) 绑定 UI 事件
             HookEvents();
@@ -63,8 +65,9 @@ namespace XyzController
             // 3) 监听 hub 变化 → 刷新 UI
             _hub.Changed += new EventHandler(Hub_Changed);
 
-            // 4) 添加默认预设点位
-            AddDefaultPresets();
+            // 4) 刷新预设点位列表（默认点位由模组在 Init 时保证）
+            _presetCounter = _presets.Count;
+            RefreshPresetList();
 
             // 5) 初始刷新
             SyncUiFromHub();
@@ -75,15 +78,8 @@ namespace XyzController
         }
 
         // ============== 预设点位数据结构 ==============
-
-        /// <summary>预设点位（纯 UI 层数据结构）。</summary>
-        private class PresetPoint
-        {
-            public string Name;
-            public float X;
-            public float Y;
-            public float Z;
-        }
+        // 注：PresetPoint 为 ProcessModules 根命名空间下的共享类型，
+        //     供界面层与点位跳转工艺模组（PointJumpProcessModule）共同使用。
 
         // ============== 事件绑定 ==============
 
@@ -96,7 +92,7 @@ namespace XyzController
             trbSpeed.Scroll += new EventHandler(TrbSpeed_Scroll);
             lvPresets.DoubleClick += new EventHandler(LvPresets_DoubleClick);
             xyView.TargetSetByMouse += new EventHandler<PointF>(XyView_TargetSetByMouse);
-            this.KeyDown += new KeyEventHandler(PointJumpForm_KeyDown);
+            this.KeyDown += new KeyEventHandler(RunForm_KeyDown);
         }
 
         // ============== UI → 业务 ==============
@@ -166,7 +162,7 @@ namespace XyzController
         }
 
         /// <summary>键盘快捷键。</summary>
-        private void PointJumpForm_KeyDown(object sender, KeyEventArgs e)
+        private void RunForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -205,10 +201,10 @@ namespace XyzController
 
         private void animTimer_Tick(object sender, EventArgs e)
         {
-            _hub.Advance();
-            xyView.Advance(_hub.CurrentLerpFraction);
+            // 位置由后端服务实时推送，严禁模拟。定时器仅用于刷新显示。
+            xyView.UpdateActual(_hub.X.Current, _hub.Y.Current);
 
-            // 更新 DRO 为当前值
+            // 更新 DRO 为后端报告的实际值
             droX.SetValue(_hub.X.Current);
             droY.SetValue(_hub.Y.Current);
             droZ.SetValue(_hub.Z.Current);
@@ -235,6 +231,12 @@ namespace XyzController
             }
         }
 
+        /// <summary>供工艺模组调用：预设点位被外部修改后刷新列表显示。</summary>
+        public void RefreshPresets()
+        {
+            RefreshPresetList();
+        }
+
         private void RefreshPresetList()
         {
             lvPresets.Items.Clear();
@@ -247,40 +249,6 @@ namespace XyzController
                 item.SubItems.Add(pt.Z.ToString("F2"));
                 lvPresets.Items.Add(item);
             }
-        }
-
-        private void AddDefaultPresets()
-        {
-            PresetPoint p1 = new PresetPoint();
-            p1.Name = "原点";
-            p1.X = 0f;
-            p1.Y = 0f;
-            p1.Z = 0f;
-            _presets.Add(p1);
-
-            PresetPoint p2 = new PresetPoint();
-            p2.Name = "中心";
-            p2.X = 0f;
-            p2.Y = 0f;
-            p2.Z = 50f;
-            _presets.Add(p2);
-
-            PresetPoint p3 = new PresetPoint();
-            p3.Name = "A工位";
-            p3.X = 30f;
-            p3.Y = 40f;
-            p3.Z = 10f;
-            _presets.Add(p3);
-
-            PresetPoint p4 = new PresetPoint();
-            p4.Name = "B工位";
-            p4.X = -50f;
-            p4.Y = 60f;
-            p4.Z = 20f;
-            _presets.Add(p4);
-
-            _presetCounter = _presets.Count;
-            RefreshPresetList();
         }
 
         private void UpdateStatusLive()

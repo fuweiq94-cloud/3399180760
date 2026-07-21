@@ -1,0 +1,2 @@
+[permissions]
+allow = ["Bash(where powershell 2>/dev/null; where pwsh 2>/dev/null; powershell -Command '$PSVersionTable.PSVersion' 2>/dev/null; pwsh -Command '$PSVersionTable.PSVersion' 2>/dev/null)"]

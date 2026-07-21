@@ -1,15 +1,13 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using XyzController.Controls;
-using XyzController.Logic;
 
-namespace XyzController
+namespace ProcessModules.Trajectory
 {
     /// <summary>
-    /// 运动轨迹查看窗体（纯 UI 层）。
+    /// 轨迹查看工艺模组运行界面（对应 DOMO 模板中的 RunForm，纯 UI 层）。
     /// 显示 XY 平面运动轨迹和 Z 轴位置条，用于观察和记录运动路径。
-    /// 所有运动逻辑委托给 XyzControllerHub（业务层），本类只负责：
+    /// 所有运动逻辑委托给所属模组的 XyzControllerHub（业务层），本类只负责：
     /// 捕获用户输入 → 转发给 hub → 监听 hub 变化 → 刷新控件。
     /// </summary>
     /// <remarks>
@@ -20,9 +18,12 @@ namespace XyzController
     ///    都放在 OnLoad 里 —— VS 设计器只执行构造函数，跳过 OnLoad，
     ///    这样设计器不会触发业务逻辑，避免红屏异常。
     /// </remarks>
-    public partial class TrajectoryViewForm : Form
+    public partial class RunForm : Form
     {
-        // —— 业务核心（在 OnLoad 中创建，构造函数里为 null）——
+        // —— 所属工艺模组（DOMO 模式：new RunForm(this)，业务核心从模组获取）——
+        private readonly TrajectoryViewProcessModule _module;
+
+        // —— 业务核心（OnLoad 中从模组获取）——
         private XyzControllerHub _hub;
 
         // —— UI 同步锁 ——
@@ -31,8 +32,13 @@ namespace XyzController
         // —— 轨迹统计 ——
         private int _trailPointCount;
 
-        public TrajectoryViewForm()
+        /// <summary>
+        /// DOMO 模式构造：由所属工艺模组创建运行界面（new RunForm(this)）。
+        /// </summary>
+        /// <param name="module">所属轨迹查看工艺模组。</param>
+        public RunForm(TrajectoryViewProcessModule module)
         {
+            _module = module;
             InitializeComponent();
             // ★ 故意留空：业务初始化全部挪到 OnLoad
             //    （设计器只执行构造函数，不执行 OnLoad，避免红屏）
@@ -47,13 +53,9 @@ namespace XyzController
         {
             base.OnLoad(e);
 
-            // 1) 创建业务层
-            _hub = new XyzControllerHub(
-                xyView.RangeMin, xyView.RangeMax,
-                xyView.RangeMin, xyView.RangeMax,
-                zBar.RangeMin, zBar.RangeMax,
-                -50f, 100f);
-            _hub.SpeedSetting = trbSpeed.Value;
+            // 1) 从所属工艺模组获取业务层（模组持有 Hub，界面与其共享）
+            _hub = _module.Hub;
+            trbSpeed.Value = MathHelper.Clamp(_hub.SpeedSetting, trbSpeed.Minimum, trbSpeed.Maximum);
 
             // 2) 绑定 UI 事件
             HookEvents();
@@ -61,7 +63,8 @@ namespace XyzController
             // 3) 监听 hub 变化 → 刷新 UI
             _hub.Changed += new EventHandler(Hub_Changed);
 
-            // 4) 初始刷新
+            // 4) 初始刷新（按模组全局参数应用轨迹显示开关）
+            cbShowTrail.Checked = _module.globalSetting.ShowTrail;
             SyncUiFromHub();
             UpdateSpeedLabel();
 
@@ -83,7 +86,7 @@ namespace XyzController
             btnRandom.Click += new EventHandler(BtnRandom_Click);
             trbSpeed.Scroll += new EventHandler(TrbSpeed_Scroll);
             xyView.TargetSetByMouse += new EventHandler<PointF>(XyView_TargetSetByMouse);
-            this.KeyDown += new KeyEventHandler(TrajectoryViewForm_KeyDown);
+            this.KeyDown += new KeyEventHandler(RunForm_KeyDown);
         }
 
         // ============== UI → 业务 ==============
@@ -91,9 +94,31 @@ namespace XyzController
         /// <summary>清除轨迹。</summary>
         private void BtnClearTrail_Click(object sender, EventArgs e)
         {
+            ClearTrail();
+        }
+
+        // ============== 供工艺模组调用的公共接口 ==============
+
+        /// <summary>供工艺模组调用：清除轨迹并复位计数。</summary>
+        public void ClearTrail()
+        {
             xyView.ClearTrail();
             _trailPointCount = 0;
-            UpdateTrailInfo();
+            if (_hub != null)
+                UpdateTrailInfo();
+        }
+
+        /// <summary>供工艺模组读写：是否显示轨迹。</summary>
+        public bool ShowTrail
+        {
+            get { return cbShowTrail.Checked; }
+            set { cbShowTrail.Checked = value; }
+        }
+
+        /// <summary>供工艺模组读取：当前轨迹点数。</summary>
+        public int TrailPointCount
+        {
+            get { return _trailPointCount; }
         }
 
         /// <summary>切换轨迹显示。</summary>
@@ -141,7 +166,7 @@ namespace XyzController
         }
 
         /// <summary>键盘快捷键。</summary>
-        private void TrajectoryViewForm_KeyDown(object sender, KeyEventArgs e)
+        private void RunForm_KeyDown(object sender, KeyEventArgs e)
         {
             int big = e.Shift ? 10 : 1;
             bool handled = true;
@@ -205,23 +230,19 @@ namespace XyzController
 
         private void animTimer_Tick(object sender, EventArgs e)
         {
-            // 推进业务层动画
-            _hub.Advance();
-
-            // 让自定义视图按当前值重画
+            // 位置由后端服务实时推送，严禁模拟。定时器仅用于刷新显示。
             if (cbShowTrail.Checked)
             {
-                xyView.Advance(_hub.CurrentLerpFraction);
+                xyView.UpdateActual(_hub.X.Current, _hub.Y.Current);
                 _trailPointCount++;
             }
             else
             {
-                // 不显示轨迹时仍更新位置但不记录轨迹
-                xyView.Advance(_hub.CurrentLerpFraction);
+                xyView.UpdateActual(_hub.X.Current, _hub.Y.Current);
             }
-            zBar.Advance(_hub.CurrentLerpFraction);
+            zBar.UpdateActual(_hub.Z.Current);
 
-            // 更新 DRO
+            // 更新 DRO 为后端报告的实际值
             droX.SetValue(_hub.X.Current);
             droY.SetValue(_hub.Y.Current);
             droZ.SetValue(_hub.Z.Current);

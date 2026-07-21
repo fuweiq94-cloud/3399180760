@@ -1,11 +1,11 @@
-namespace XyzController
+namespace ProcessModules.MainControl
 {
     /// <summary>
-    /// 主窗体的设计器文件。
+    /// 主控制工艺模组运行界面的设计器文件。
     /// 此文件采用 VS 设计器兼容的纯声明式写法：每个控件属性逐行显式设置，
-    /// 不使用循环 / 辅助方法 / 集合初始化器之外的语法，以便在 VS2022 WinForms 设计器中打开。
+    /// 不使用循环 / 辅助方法 / 集合初始化器之外的语法，以便在 VS2017+ WinForms 设计器中打开。
     /// </summary>
-    partial class MainForm
+    partial class RunForm
     {
         /// <summary>
         /// 必需的设计器变量。
@@ -16,11 +16,11 @@ namespace XyzController
         private System.Windows.Forms.SplitContainer splitMain;
         private System.Windows.Forms.Panel pnlRight;
 
-        // —— XY 视图（自定义控件，来自 XyzController.Controls 类库）——
-        private XyzController.Controls.XYView xyView;
+        // —— XY 视图（自定义控件，来自本类库 Controls）——
+        private ProcessModules.XYView xyView;
 
         // —— Z 视图（自定义控件）——
-        private XyzController.Controls.ZBarView zBar;
+        private ProcessModules.ZBarView zBar;
 
         // —— X 轴组 ——
         private System.Windows.Forms.GroupBox grpX;
@@ -43,13 +43,6 @@ namespace XyzController
         private System.Windows.Forms.Button btnZMinus;
         private System.Windows.Forms.Button btnZPlus;
 
-        // —— U 轴组 ——
-        private System.Windows.Forms.GroupBox grpU;
-        private System.Windows.Forms.TrackBar trbU;
-        private System.Windows.Forms.NumericUpDown nudU;
-        private System.Windows.Forms.Button btnUMinus;
-        private System.Windows.Forms.Button btnUPlus;
-
         // —— 通用组 ——
         private System.Windows.Forms.GroupBox grpCommon;
         private System.Windows.Forms.TableLayoutPanel tlpCommon;
@@ -71,15 +64,12 @@ namespace XyzController
         private System.Windows.Forms.Label lblAxisHdrX;
         private System.Windows.Forms.Label lblAxisHdrY;
         private System.Windows.Forms.Label lblAxisHdrZ;
-        private System.Windows.Forms.Label lblAxisHdrU;
-        private XyzController.Controls.JogButton jogXMinus;
-        private XyzController.Controls.JogButton jogXPlus;
-        private XyzController.Controls.JogButton jogYMinus;
-        private XyzController.Controls.JogButton jogYPlus;
-        private XyzController.Controls.JogButton jogZMinus;
-        private XyzController.Controls.JogButton jogZPlus;
-        private XyzController.Controls.JogButton jogUMinus;
-        private XyzController.Controls.JogButton jogUPlus;
+        private ProcessModules.JogButton jogXMinus;
+        private ProcessModules.JogButton jogXPlus;
+        private ProcessModules.JogButton jogYMinus;
+        private ProcessModules.JogButton jogYPlus;
+        private ProcessModules.JogButton jogZMinus;
+        private ProcessModules.JogButton jogZPlus;
         private System.Windows.Forms.Button btnEStop;
 
         // —— 状态栏 ——
@@ -113,8 +103,8 @@ namespace XyzController
         {
             this.components = new System.ComponentModel.Container();
             this.splitMain = new System.Windows.Forms.SplitContainer();
-            this.xyView = new XyzController.Controls.XYView();
-            this.zBar = new XyzController.Controls.ZBarView();
+            this.xyView = new ProcessModules.XYView();
+            this.zBar = new ProcessModules.ZBarView();
             this.pnlRight = new System.Windows.Forms.Panel();
             this.grpCommon = new System.Windows.Forms.GroupBox();
             this.tlpCommon = new System.Windows.Forms.TableLayoutPanel();
@@ -133,22 +123,14 @@ namespace XyzController
             this.nudJogStep = new System.Windows.Forms.NumericUpDown();
             this.btnEStop = new System.Windows.Forms.Button();
             this.lblAxisHdrX = new System.Windows.Forms.Label();
-            this.jogXMinus = new XyzController.Controls.JogButton();
-            this.jogXPlus = new XyzController.Controls.JogButton();
+            this.jogXMinus = new ProcessModules.JogButton();
+            this.jogXPlus = new ProcessModules.JogButton();
             this.lblAxisHdrY = new System.Windows.Forms.Label();
-            this.jogYMinus = new XyzController.Controls.JogButton();
-            this.jogYPlus = new XyzController.Controls.JogButton();
+            this.jogYMinus = new ProcessModules.JogButton();
+            this.jogYPlus = new ProcessModules.JogButton();
             this.lblAxisHdrZ = new System.Windows.Forms.Label();
-            this.jogZMinus = new XyzController.Controls.JogButton();
-            this.jogZPlus = new XyzController.Controls.JogButton();
-            this.lblAxisHdrU = new System.Windows.Forms.Label();
-            this.jogUMinus = new XyzController.Controls.JogButton();
-            this.jogUPlus = new XyzController.Controls.JogButton();
-            this.grpU = new System.Windows.Forms.GroupBox();
-            this.btnUMinus = new System.Windows.Forms.Button();
-            this.trbU = new System.Windows.Forms.TrackBar();
-            this.btnUPlus = new System.Windows.Forms.Button();
-            this.nudU = new System.Windows.Forms.NumericUpDown();
+            this.jogZMinus = new ProcessModules.JogButton();
+            this.jogZPlus = new ProcessModules.JogButton();
             this.grpZ = new System.Windows.Forms.GroupBox();
             this.btnZMinus = new System.Windows.Forms.Button();
             this.trbZ = new System.Windows.Forms.TrackBar();
@@ -179,9 +161,6 @@ namespace XyzController
             this.grpJog.SuspendLayout();
             this.tlpJog.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudJogStep)).BeginInit();
-            this.grpU.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trbU)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudU)).BeginInit();
             this.grpZ.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trbZ)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudZ)).BeginInit();
@@ -246,7 +225,6 @@ namespace XyzController
             this.pnlRight.AutoScroll = true;
             this.pnlRight.Controls.Add(this.grpCommon);
             this.pnlRight.Controls.Add(this.grpJog);
-            this.pnlRight.Controls.Add(this.grpU);
             this.pnlRight.Controls.Add(this.grpZ);
             this.pnlRight.Controls.Add(this.grpY);
             this.pnlRight.Controls.Add(this.grpX);
@@ -393,7 +371,7 @@ namespace XyzController
             this.grpJog.Margin = new System.Windows.Forms.Padding(4);
             this.grpJog.Name = "grpJog";
             this.grpJog.Padding = new System.Windows.Forms.Padding(6);
-            this.grpJog.Size = new System.Drawing.Size(748, 435);
+            this.grpJog.Size = new System.Drawing.Size(748, 375);
             this.grpJog.TabIndex = 5;
             this.grpJog.TabStop = false;
             this.grpJog.Text = "JOG 控制（按住按钮移动）";
@@ -409,7 +387,7 @@ namespace XyzController
             this.tlpJog.Controls.Add(this.rbContinuous, 1, 0);
             this.tlpJog.Controls.Add(this.lblStep, 2, 0);
             this.tlpJog.Controls.Add(this.nudJogStep, 3, 0);
-            this.tlpJog.Controls.Add(this.btnEStop, 0, 5);
+            this.tlpJog.Controls.Add(this.btnEStop, 0, 4);
             this.tlpJog.Controls.Add(this.lblAxisHdrX, 0, 1);
             this.tlpJog.Controls.Add(this.jogXMinus, 1, 1);
             this.tlpJog.Controls.Add(this.jogXPlus, 2, 1);
@@ -419,21 +397,17 @@ namespace XyzController
             this.tlpJog.Controls.Add(this.lblAxisHdrZ, 0, 3);
             this.tlpJog.Controls.Add(this.jogZMinus, 1, 3);
             this.tlpJog.Controls.Add(this.jogZPlus, 2, 3);
-            this.tlpJog.Controls.Add(this.lblAxisHdrU, 0, 4);
-            this.tlpJog.Controls.Add(this.jogUMinus, 1, 4);
-            this.tlpJog.Controls.Add(this.jogUPlus, 2, 4);
             this.tlpJog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpJog.Location = new System.Drawing.Point(6, 30);
             this.tlpJog.Margin = new System.Windows.Forms.Padding(4);
             this.tlpJog.Name = "tlpJog";
-            this.tlpJog.RowCount = 6;
+            this.tlpJog.RowCount = 5;
             this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
-            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33F));
+            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33F));
+            this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 34F));
             this.tlpJog.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tlpJog.Size = new System.Drawing.Size(736, 399);
+            this.tlpJog.Size = new System.Drawing.Size(736, 339);
             this.tlpJog.TabIndex = 0;
             // 
             // rbIncremental
@@ -506,11 +480,11 @@ namespace XyzController
             this.btnEStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEStop.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnEStop.ForeColor = System.Drawing.Color.White;
-            this.btnEStop.Location = new System.Drawing.Point(4, 342);
+            this.btnEStop.Location = new System.Drawing.Point(4, 282);
             this.btnEStop.Margin = new System.Windows.Forms.Padding(4);
             this.btnEStop.Name = "btnEStop";
             this.btnEStop.Size = new System.Drawing.Size(728, 53);
-            this.btnEStop.TabIndex = 16;
+            this.btnEStop.TabIndex = 13;
             this.btnEStop.Text = "■ 急停 (E-STOP)";
             this.btnEStop.UseVisualStyleBackColor = false;
             // 
@@ -627,117 +601,6 @@ namespace XyzController
             this.jogZPlus.Size = new System.Drawing.Size(247, 70);
             this.jogZPlus.TabIndex = 12;
             this.jogZPlus.Text = "△ Z+";
-            // 
-            // lblAxisHdrU
-            // 
-            this.lblAxisHdrU.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAxisHdrU.Location = new System.Drawing.Point(4, 276);
-            this.lblAxisHdrU.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblAxisHdrU.Name = "lblAxisHdrU";
-            this.lblAxisHdrU.Size = new System.Drawing.Size(82, 78);
-            this.lblAxisHdrU.TabIndex = 13;
-            this.lblAxisHdrU.Text = "U 轴";
-            this.lblAxisHdrU.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // jogUMinus
-            // 
-            this.jogUMinus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(248)))));
-            this.jogUMinus.Direction = -1;
-            this.jogUMinus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.jogUMinus.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.jogUMinus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(80)))));
-            this.jogUMinus.Location = new System.Drawing.Point(94, 280);
-            this.jogUMinus.Margin = new System.Windows.Forms.Padding(4);
-            this.jogUMinus.Name = "jogUMinus";
-            this.jogUMinus.Size = new System.Drawing.Size(247, 70);
-            this.jogUMinus.TabIndex = 14;
-            this.jogUMinus.Text = "◇ U-";
-            // 
-            // jogUPlus
-            // 
-            this.jogUPlus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(248)))));
-            this.jogUPlus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.jogUPlus.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.jogUPlus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(80)))));
-            this.jogUPlus.Location = new System.Drawing.Point(349, 280);
-            this.jogUPlus.Margin = new System.Windows.Forms.Padding(4);
-            this.jogUPlus.Name = "jogUPlus";
-            this.jogUPlus.Size = new System.Drawing.Size(247, 70);
-            this.jogUPlus.TabIndex = 15;
-            this.jogUPlus.Text = "◆ U+";
-            // 
-            // grpU
-            // 
-            this.grpU.Controls.Add(this.btnUMinus);
-            this.grpU.Controls.Add(this.trbU);
-            this.grpU.Controls.Add(this.btnUPlus);
-            this.grpU.Controls.Add(this.nudU);
-            this.grpU.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpU.Location = new System.Drawing.Point(18, 624);
-            this.grpU.Margin = new System.Windows.Forms.Padding(6);
-            this.grpU.Name = "grpU";
-            this.grpU.Padding = new System.Windows.Forms.Padding(6);
-            this.grpU.Size = new System.Drawing.Size(748, 202);
-            this.grpU.TabIndex = 4;
-            this.grpU.TabStop = false;
-            this.grpU.Text = "U 轴";
-            // 
-            // btnUMinus
-            // 
-            this.btnUMinus.Dock = System.Windows.Forms.DockStyle.Left;
-            this.btnUMinus.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnUMinus.Location = new System.Drawing.Point(6, 30);
-            this.btnUMinus.Margin = new System.Windows.Forms.Padding(6);
-            this.btnUMinus.Name = "btnUMinus";
-            this.btnUMinus.Size = new System.Drawing.Size(126, 166);
-            this.btnUMinus.TabIndex = 0;
-            this.btnUMinus.Text = "◇ -1";
-            this.btnUMinus.UseVisualStyleBackColor = true;
-            // 
-            // trbU
-            // 
-            this.trbU.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trbU.Location = new System.Drawing.Point(6, 30);
-            this.trbU.Margin = new System.Windows.Forms.Padding(6);
-            this.trbU.Maximum = 100;
-            this.trbU.Minimum = -50;
-            this.trbU.Name = "trbU";
-            this.trbU.Size = new System.Drawing.Size(475, 166);
-            this.trbU.TabIndex = 1;
-            this.trbU.TickFrequency = 10;
-            // 
-            // btnUPlus
-            // 
-            this.btnUPlus.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnUPlus.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnUPlus.Location = new System.Drawing.Point(481, 30);
-            this.btnUPlus.Margin = new System.Windows.Forms.Padding(6);
-            this.btnUPlus.Name = "btnUPlus";
-            this.btnUPlus.Size = new System.Drawing.Size(126, 166);
-            this.btnUPlus.TabIndex = 2;
-            this.btnUPlus.Text = "+1 ◆";
-            this.btnUPlus.UseVisualStyleBackColor = true;
-            // 
-            // nudU
-            // 
-            this.nudU.DecimalPlaces = 2;
-            this.nudU.Dock = System.Windows.Forms.DockStyle.Right;
-            this.nudU.Location = new System.Drawing.Point(607, 30);
-            this.nudU.Margin = new System.Windows.Forms.Padding(6);
-            this.nudU.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.nudU.Minimum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            -2147483648});
-            this.nudU.Name = "nudU";
-            this.nudU.Size = new System.Drawing.Size(135, 31);
-            this.nudU.TabIndex = 3;
-            this.nudU.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // grpZ
             // 
@@ -983,7 +846,7 @@ namespace XyzController
             // 
             this.lblHint.Name = "lblHint";
             this.lblHint.Size = new System.Drawing.Size(810, 24);
-            this.lblHint.Text = "快捷键：方向键/WASD 控 X/Y；Q/E 控 Z；R/F 控 U；Shift 加速；Space 回原点；Esc 清轨迹";
+            this.lblHint.Text = "快捷键：方向键/WASD 控 X/Y；Q/E 或 PgUp/PgDn 控 Z；Shift 加速；Space 回原点；Esc 清轨迹";
             this.lblHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // animTimer
@@ -1003,7 +866,7 @@ namespace XyzController
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(6);
             this.MinimumSize = new System.Drawing.Size(1908, 965);
-            this.Name = "MainForm";
+            this.Name = "RunForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "XYZ 轴实时控制器  ·  WinForms  ·  .NET Framework 4.6.1";
             this.splitMain.Panel1.ResumeLayout(false);
@@ -1018,10 +881,6 @@ namespace XyzController
             this.grpJog.ResumeLayout(false);
             this.tlpJog.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudJogStep)).EndInit();
-            this.grpU.ResumeLayout(false);
-            this.grpU.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trbU)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudU)).EndInit();
             this.grpZ.ResumeLayout(false);
             this.grpZ.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trbZ)).EndInit();

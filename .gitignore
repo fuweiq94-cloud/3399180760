@@ -65,6 +65,9 @@ $RECYCLE.BIN/
 *.swp
 *~
 
+# ---------- Qoder IDE ----------
+.qoder/
+
 # ---------- 本项目特有 ----------
 # 已经被错误提交到源码目录的编译产物（清理用，无需保留）
 src/XyzController/XyzController.exe

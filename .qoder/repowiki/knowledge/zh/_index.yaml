@@ -3,7 +3,7 @@ schema_version: 1
 locale: zh-CN
 branch: main
 nodes_managed: true
-exported_at: "2026-07-20T17:51:11Z"
+exported_at: "2026-07-21T00:27:57Z"
 modules:
     "":
         dir_name: XYZ 三轴虚拟坐标点实时控制桌面应用（WinForms）

@@ -14,7 +14,7 @@ namespace XyzController.Tests.Tests
         [Setup]
         public void Setup()
         {
-            _hub = new XyzControllerHub(-100f, 100f, -100f, 100f, -50f, 100f);
+            _hub = new XyzControllerHub(-100f, 100f, -100f, 100f, -50f, 100f, -50f, 100f);
         }
 
         // ============== 构造 ==============
