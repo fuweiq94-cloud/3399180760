@@ -118,9 +118,9 @@ namespace MyProject
 - 业务项目输出类型可以是 Library（DLL），由 Launcher 反射调用。
 - 导航栏按钮数量 = `pages` 列表长度，无上限，完全由业务方决定。
 - 每个 `WpfPage` 的 `Form` 会被自动设置为 `TopLevel=false`、无边框、`Dock=Fill`，业务方无需手动处理。
-- **窗口尺寸启动时适配一次，之后保持稳定**：框架会在嵌入前强制完成各 Form 的 AutoScale（Dpi/Font）缩放，读取其「独立运行时」的 `ClientSize` 与 `MinimumSize`，启动时按全部页面设计尺寸的并集最大值调整一次窗口（含最小尺寸约束）。切换页面只做显隐切换，窗口尺寸/位置绝不再变化（无跳动、无闪烁）。
-- **页面布局规范**：页面以 `Dock=Fill` 弹性填充内容区。DIY Form 应使用 Dock / Anchor / TableLayoutPanel / SplitContainer + AutoScroll 等弹性布局（以 MainForm、TrajectoryViewForm、PointJumpForm 为范例），即可在任意窗口尺寸下保持与设计器一致的结构；纯绝对定位的页面会在大窗口中右下留白（属正常表现）。
-- Form 设计尺寸超出屏幕工作区时，窗口会被钳制到屏幕大小（由 Form 内部 AutoScroll 兜底）；用户主动最大化窗口时不做强制调整。
+- **窗口固定尺寸，切换页面绝不变化**：窗口使用 `MainWindow.xaml` 中声明的固定初始尺寸（`Width/Height`，`SizeToContent=Manual`），不随任何页面内容调整；`MinWidth/MinHeight` 限制用户手动缩放的下限，用户仍可自由拉大或最大化窗口。切换页面只做显隐切换，窗口尺寸/位置绝不再变化（无跳动、无闪烁）。
+- **页面布局规范**：页面统一以 `Dock=Fill` 弹性填充同一个固定尺寸的内容区（页面适应窗口，而非窗口适应页面）。DIY Form 应使用 Dock / Anchor / TableLayoutPanel / SplitContainer + AutoScroll 等弹性布局（以 MainForm、TrajectoryViewForm、PointJumpForm 为范例），即可在任意窗口尺寸下保持与设计器一致的结构；纯绝对定位的页面会在大窗口中右下留白（属正常表现）。嵌入时框架会清除 Form 设计期的 `MinimumSize` 并强制 `AutoScroll=true`，内容超出可视区时由页面自身滚动条兜底。
+- 固定初始尺寸超出屏幕工作区时（小屏/低分辨率设备），启动时一次性钳制到工作区内并重新居中；用户主动最大化窗口时不做强制调整。
 
 ### 3.3 命令行参数
 
@@ -150,16 +150,14 @@ Launcher.exe 启动后：
 
 MainWindow 的 XAML 中导航栏只是一个空的 `StackPanel`，按钮在 `Window_Loaded` 时由 `BuildNavigation()` 根据 `_pages` 列表循环生成。切换页面通过 `WindowsFormsHost.Visibility` 控制显隐。
 
-### 4.3 窗口尺寸一次适配机制
+### 4.3 固定窗口尺寸机制
 
-为避免「VS 设计器布局与 WPF 宿主运行时不一致」，同时保证切换页面时窗口绝对稳定（无跳动/闪烁），框架在 `Window_Loaded` 时执行以下一次性流程：
+为保证切换页面时窗口绝对稳定（无跳动/闪烁），框架采用「固定窗口尺寸 + 页面自适应」策略：
 
-1. **嵌入前捕获真实尺寸**：对每个 Form 先调用 `CreateControl()` 强制创建句柄，触发 WinForms 的 AutoScale（Dpi/Font）缩放，然后读取缩放后的 `ClientSize` / `MinimumSize`（即 Form 独立运行时的真实尺寸）。此操作不会显示窗口，`Load`/`Shown` 事件仍在 `form.Show()` 时才触发。
-2. **像素 → DIU 换算**：WinForms 用物理像素，WPF 用 96-DPI 设备无关单位（DIU）。框架通过 `Graphics.DpiX / 96` 得到系统 DPI 缩放系数进行换算（进程已声明 `SetProcessDPIAware`，读到的是真实 DPI）。
-3. **聚合一次适配（`FitWindowOnce`）**：取全部页面客户区尺寸的逐分量最大值，`窗口尺寸 = 最大客户区(DIU) + 实测非内容区`（标题栏 + 边框 + 导航栏，通过 `ActualWidth - contentArea.ActualWidth` 实测）；窗口 `MinWidth/MinHeight` 取各页 `MinimumSize` 的并集最大值换算。适配只在启动时执行一次，之后 `SwitchPage` 只做 `Visibility` 显隐切换，绝不 resize 窗口。
-4. **居中与钳制**：适配后窗口居中到屏幕工作区；目标尺寸超出工作区时钳制，并同步放宽最小尺寸约束；窗口处于最大化状态时跳过适配。
-
-`MainWindow.xaml` 中的 `Width/Height/MinWidth/MinHeight` 仅为首轮布局的占位值，运行时会被上述逻辑覆盖。
+1. **固定尺寸声明**：`MainWindow.xaml` 显式设置 `Width/Height`（固定初始尺寸）、`MinWidth/MinHeight`（手动缩放下限）与 `SizeToContent="Manual"`，窗口尺寸不随任何页面内容变化。
+2. **页面适应窗口**：每个 Form 嵌入时统一设置 `TopLevel=false`、无边框、`Dock=Fill`，并清除设计期 `MinimumSize`、强制 `AutoScroll=true`。所有页面填充同一个固定尺寸的内容区，靠自身的 Dock/Anchor/TableLayoutPanel 弹性布局与滚动条适配窗口。
+3. **启动时一次钳制（`ClampWindowToWorkAreaOnce`）**：固定初始尺寸超出当前屏幕工作区时（小屏/低分辨率），收缩到工作区内并重新居中。只在 `Window_Loaded` 时执行一次；窗口处于最大化状态时跳过。
+4. **切换零 resize**：`SwitchPage` 只做 `Visibility` 显隐切换，绝不修改窗口尺寸/位置；用户手动缩放、最大化窗口不受限制。
 
 ### 4.4 Airspace 限制
 
