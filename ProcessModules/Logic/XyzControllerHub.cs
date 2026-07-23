@@ -113,7 +113,11 @@ namespace ProcessModules
             ApplyPosition(e.Position);
         }
 
-        /// <summary>将位置快照应用到各轴。</summary>
+        /// <summary>
+        /// 将位置快照应用到各轴。
+        /// 仅更新 Actual（真实反馈）→ Current；忽略反馈中的 Target，
+        /// 避免后端 Target 覆盖用户/Action 正在设定的本地目标。
+        /// </summary>
         private void ApplyPosition(AxisPosition pos)
         {
             if (pos.Actual != null)
@@ -121,11 +125,7 @@ namespace ProcessModules
                 for (int i = 0; i < _axes.Length && i < pos.Actual.Length; i++)
                     _axes[i].UpdateCurrent(pos.Actual[i]);
             }
-            if (pos.Target != null)
-            {
-                for (int i = 0; i < _axes.Length && i < pos.Target.Length; i++)
-                    _axes[i].SetTarget(pos.Target[i]);
-            }
+            // 故意不应用 pos.Target：本地 Target 由 SetTarget / JOG / Action 独占
         }
 
         // ============== 指令下发（统一通过 MotionCommand）==============
@@ -192,12 +192,17 @@ namespace ProcessModules
         /// <summary>停止所有轴运动。</summary>
         public void Stop()
         {
+            // 冻结本地目标，避免 UI/动画继续追旧目标
+            for (int i = 0; i < _axes.Length; i++)
+                _axes[i].SetTarget(_axes[i].Current);
             SendCommand(new MotionCommand(MotionCommandType.Stop));
         }
 
-        /// <summary>急停。</summary>
+        /// <summary>急停：冻结本地目标并向硬件下发急停指令。</summary>
         public void EmergencyStop()
         {
+            for (int i = 0; i < _axes.Length; i++)
+                _axes[i].SetTarget(_axes[i].Current);
             SendCommand(new MotionCommand(MotionCommandType.EmergencyStop));
         }
 

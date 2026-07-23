@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using InterfaceDefine;
 
@@ -19,6 +21,9 @@ namespace ProcessModules.MainControl
         /// <summary>本项目中该模组累计执行 GOTO 命令的次数。</summary>
         public int GotoCount;
 
+        /// <summary>预设点位列表（统一界面使用）。</summary>
+        public List<PresetPoint> Presets = new List<PresetPoint>();
+
         public MainControlProjectSetting()
         {
         }
@@ -31,13 +36,14 @@ namespace ProcessModules.MainControl
         {
             MainControlProjectSetting pDoc = null;
             string sDirectory = Path.Combine(
-                ProcessModuleEnvironment.CurrentProjectPath, actionerName, "MainControlProjectSetting.xml");
+                MainModule.ProjectManager.projectSetting.strProjectPath, actionerName, "MainControlProjectSetting.xml");
             try
             {
-                pDoc = XmlSerializationHelper.ReadFromFile<MainControlProjectSetting>(sDirectory);
+                pDoc = InterfaceDefine.CommKit.XMLSerializationHelper.ReadFromFile<MainControlProjectSetting>(sDirectory);
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("MainControlProjectSetting 加载失败:" + ex.Message);
                 pDoc = new MainControlProjectSetting();
             }
             pDoc.Name = actionerName;
@@ -49,13 +55,13 @@ namespace ProcessModules.MainControl
         /// </summary>
         public bool Save()
         {
-            string sDirectory = Path.Combine(ProcessModuleEnvironment.CurrentProjectPath, Name);
+            string sDirectory = Path.Combine(MainModule.ProjectManager.projectSetting.strProjectPath, Name);
             if (!Directory.Exists(sDirectory))
             {
                 Directory.CreateDirectory(sDirectory);
             }
             sDirectory = Path.Combine(sDirectory, "MainControlProjectSetting.xml");
-            XmlSerializationHelper.SaveToFile(sDirectory, this);
+            InterfaceDefine.CommKit.XMLSerializationHelper.SaveToFile(sDirectory, this);
             return true;
         }
     }

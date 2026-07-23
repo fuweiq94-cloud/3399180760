@@ -34,6 +34,15 @@ namespace ProcessModules.PointJump
         private int _presetCounter;
 
         /// <summary>
+        /// 无参构造：仅供 VS 设计器实例化使用。
+        /// 运行时请使用带参构造函数注入工艺模组。
+        /// </summary>
+        public RunForm()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// DOMO 模式构造：由所属工艺模组创建运行界面（new RunForm(this)）。
         /// </summary>
         /// <param name="module">所属点位跳转工艺模组。</param>
@@ -54,6 +63,11 @@ namespace ProcessModules.PointJump
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            // 0) 固定右侧面板宽度，禁止用户拖动分隔条
+            splitMain.IsSplitterFixed = true;
+            FixSplitterDistance();
+            splitMain.SplitterMoved += new SplitterEventHandler(SplitMain_SplitterMoved);
 
             // 1) 从所属工艺模组获取业务层（模组持有 Hub，界面与其共享）
             _hub = _module.Hub;
@@ -77,6 +91,28 @@ namespace ProcessModules.PointJump
             animTimer.Start();
         }
 
+        /// <summary>
+        /// 让 Panel2（右侧控制面板）始终保持在 440px 宽。
+        /// </summary>
+        private void FixSplitterDistance()
+        {
+            int panel2Width = 440;
+            int target = splitMain.Width - panel2Width - splitMain.SplitterWidth;
+            if (target > 0 && splitMain.SplitterDistance != target)
+                splitMain.SplitterDistance = target;
+        }
+
+        private void SplitMain_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            FixSplitterDistance();
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            if (splitMain != null) FixSplitterDistance();
+        }
+
         // ============== 预设点位数据结构 ==============
         // 注：PresetPoint 为 ProcessModules 根命名空间下的共享类型，
         //     供界面层与点位跳转工艺模组（PointJumpProcessModule）共同使用。
@@ -91,7 +127,7 @@ namespace ProcessModules.PointJump
             btnGotoSelected.Click += new EventHandler(BtnGotoSelected_Click);
             trbSpeed.Scroll += new EventHandler(TrbSpeed_Scroll);
             lvPresets.DoubleClick += new EventHandler(LvPresets_DoubleClick);
-            xyView.TargetSetByMouse += new EventHandler<PointF>(XyView_TargetSetByMouse);
+            xyView.TargetSetByMouse += new EventHandler<TargetSetEventArgs>(XyView_TargetSetByMouse);
             this.KeyDown += new KeyEventHandler(RunForm_KeyDown);
         }
 
@@ -155,7 +191,7 @@ namespace ProcessModules.PointJump
         }
 
         /// <summary>鼠标点击 XY 视图设定目标。</summary>
-        private void XyView_TargetSetByMouse(object sender, PointF e)
+        private void XyView_TargetSetByMouse(object sender, TargetSetEventArgs e)
         {
             _hub.X.SetTarget(e.X);
             _hub.Y.SetTarget(e.Y);
@@ -175,7 +211,21 @@ namespace ProcessModules.PointJump
 
         private void Hub_Changed(object sender, EventArgs e)
         {
+            // 硬件回调可能跨线程，安全地切到 UI 线程刷新
+            if (InvokeRequired)
+            {
+                BeginInvoke(new EventHandler(Hub_Changed), sender, e);
+                return;
+            }
             SyncUiFromHub();
+        }
+
+        /// <summary>窗体关闭时退订 Hub，避免重复订阅与已释放控件被回调。</summary>
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            if (_hub != null)
+                _hub.Changed -= Hub_Changed;
+            base.OnFormClosed(e);
         }
 
         /// <summary>把 hub 状态同步到 UI 控件。</summary>

@@ -33,6 +33,15 @@ namespace ProcessModules.MainControl
         private bool _syncing;
 
         /// <summary>
+        /// 无参构造：仅供 VS 设计器实例化使用。
+        /// 运行时请使用带参构造函数注入工艺模组。
+        /// </summary>
+        public RunForm()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// DOMO 模式构造：由所属工艺模组创建运行界面（new RunForm(this)）。
         /// </summary>
         /// <param name="module">所属主控制工艺模组。</param>
@@ -81,6 +90,15 @@ namespace ProcessModules.MainControl
             FixSplitterDistance();
             splitMain.SplitterMoved += new SplitterEventHandler(SplitMain_SplitterMoved);
         }
+
+        /// <summary>窗体关闭时退订 Hub，避免重复订阅与已释放控件被回调。</summary>
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            if (_hub != null)
+                _hub.Changed -= Hub_Changed;
+            base.OnFormClosed(e);
+        }
+
 
         /// <summary>
         /// 让 Panel2（Z 条）始终保持在右侧 80px 宽。
@@ -168,7 +186,7 @@ namespace ProcessModules.MainControl
             btnEStop.Click += new EventHandler(BtnEStop_Click);
 
             // —— 鼠标拖动 XY 视图设定目标 ——
-            xyView.TargetSetByMouse += new EventHandler<PointF>(XyView_TargetSetByMouse);
+            xyView.TargetSetByMouse += new EventHandler<TargetSetEventArgs>(XyView_TargetSetByMouse);
 
             // —— 键盘 ——
             this.KeyDown += new KeyEventHandler(RunForm_KeyDown);
@@ -177,6 +195,12 @@ namespace ProcessModules.MainControl
         // —— hub 变化 → 刷新 UI ——
         private void Hub_Changed(object sender, EventArgs e)
         {
+            // 硬件回调可能跨线程，安全地切到 UI 线程刷新
+            if (InvokeRequired)
+            {
+                BeginInvoke(new EventHandler(Hub_Changed), sender, e);
+                return;
+            }
             SyncUiFromHub();
         }
 
@@ -246,7 +270,7 @@ namespace ProcessModules.MainControl
         }
 
         // —— 鼠标点击 XY 视图设定目标 ——
-        private void XyView_TargetSetByMouse(object sender, PointF e)
+        private void XyView_TargetSetByMouse(object sender, TargetSetEventArgs e)
         {
             _hub.X.SetTarget(e.X);
             _hub.Y.SetTarget(e.Y);
@@ -260,18 +284,18 @@ namespace ProcessModules.MainControl
         {
             // 把 service 通过 closure 替换为 JogButton.Tag 携带，便于在命名方法里取回。
             btn.Tag = service;
-            btn.Jog += new EventHandler<int>(JogButton_Jog);
-            btn.Stop += new EventHandler<int>(JogButton_Stop);
+            btn.Jog += new EventHandler<JogEventArgs>(JogButton_Jog);
+            btn.Stop += new EventHandler<JogEventArgs>(JogButton_Stop);
         }
 
-        private void JogButton_Jog(object sender, int direction)
+        private void JogButton_Jog(object sender, JogEventArgs e)
         {
             JogButton btn = (JogButton)sender;
             AxisJogService service = (AxisJogService)btn.Tag;
-            service.OnJogStart(direction);
+            service.OnJogStart(e.Direction);
         }
 
-        private void JogButton_Stop(object sender, int direction)
+        private void JogButton_Stop(object sender, JogEventArgs e)
         {
             JogButton btn = (JogButton)sender;
             AxisJogService service = (AxisJogService)btn.Tag;

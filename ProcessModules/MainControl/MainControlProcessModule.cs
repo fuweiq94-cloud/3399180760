@@ -23,6 +23,7 @@ namespace ProcessModules.MainControl
     public class MainControlProcessModule : ProcessModuleBase
     {
         internal RunForm runForm;
+        internal UnifiedRunForm unifiedRunForm;
         public ModuleSettingForm settingForm;
 
         public MainControlGlobalSetting globalSetting;
@@ -59,6 +60,10 @@ namespace ProcessModules.MainControl
                 processModuleName = strName;
                 bInitOK = false;
                 LoadSetting();
+
+                // 保证预设点位列表有默认值
+                if (projectSetting.Presets.Count == 0)
+                    AddDefaultPresets();
 
                 // 创建业务层（轴范围与速度取自全局参数）
                 // null = 后端服务尚未接入（待引入真实 DLL 后通过 SetService 注入）
@@ -114,6 +119,15 @@ namespace ProcessModules.MainControl
                 s.SetMode(mode);
                 s.SetStepDistance(globalSetting.JogStep);
             }
+        }
+
+        /// <summary>补一组默认预设点位（统一界面使用）。</summary>
+        private void AddDefaultPresets()
+        {
+            projectSetting.Presets.Add(new PresetPoint("原点", 0f, 0f, 0f));
+            projectSetting.Presets.Add(new PresetPoint("中心", 0f, 0f, 50f));
+            projectSetting.Presets.Add(new PresetPoint("A工位", 30f, 40f, 10f));
+            projectSetting.Presets.Add(new PresetPoint("B工位", -50f, 60f, 20f));
         }
 
         /// <summary>重新加载工艺模组。</summary>
@@ -193,11 +207,13 @@ namespace ProcessModules.MainControl
                     globalSetting.YMin, globalSetting.YMax,
                     globalSetting.ZMin, globalSetting.ZMax,
                     globalSetting.UMin, globalSetting.UMax);
+            if (unifiedRunForm != null && !unifiedRunForm.IsDisposed)
+                unifiedRunForm.ApplyRanges();
             if (runForm != null && !runForm.IsDisposed)
                 runForm.ApplyRanges();
         }
 
-        /// <summary>显示工艺模组运行界面（DOMO 模式：RunForm 持有模组引用）。</summary>
+        /// <summary>显示工艺模组运行界面（统一界面）。</summary>
         public override bool ShowRunForm(Panel panel)
         {
             foreach (Control controlItem in panel.Controls)
@@ -205,13 +221,13 @@ namespace ProcessModules.MainControl
                 controlItem.Visible = false;
             }
             panel.Controls.Clear();
-            if (runForm == null || runForm.IsDisposed)
-                runForm = new RunForm(this);
+            if (unifiedRunForm == null || unifiedRunForm.IsDisposed)
+                unifiedRunForm = new UnifiedRunForm(this);
 
-            runForm.TopLevel = false;
-            panel.Controls.Add(runForm);
-            runForm.Dock = DockStyle.Fill;
-            runForm.Show();
+            unifiedRunForm.TopLevel = false;
+            panel.Controls.Add(unifiedRunForm);
+            unifiedRunForm.Dock = DockStyle.Fill;
+            unifiedRunForm.Show();
             return true;
         }
 
@@ -254,9 +270,27 @@ namespace ProcessModules.MainControl
                         ret = -2;
                         break;
                     }
-                    float x = Convert.ToSingle(param[1]);
-                    float y = Convert.ToSingle(param[2]);
-                    float z = Convert.ToSingle(param[3]);
+                    
+                    float x, y, z;
+                    if (!float.TryParse(param[1].ToString(), out x))
+                    {
+                        InsertAlarm("GOTO 命令 X 坐标格式错误:" + param[1]);
+                        ret = -2;
+                        break;
+                    }
+                    if (!float.TryParse(param[2].ToString(), out y))
+                    {
+                        InsertAlarm("GOTO 命令 Y 坐标格式错误:" + param[2]);
+                        ret = -2;
+                        break;
+                    }
+                    if (!float.TryParse(param[3].ToString(), out z))
+                    {
+                        InsertAlarm("GOTO 命令 Z 坐标格式错误:" + param[3]);
+                        ret = -2;
+                        break;
+                    }
+                    
                     SetModuleVariable("主平台请求移动", "true");
                     _hub.SetTarget(x, y, z);
                     projectSetting.GotoCount++;
@@ -368,6 +402,9 @@ namespace ProcessModules.MainControl
         {
             foreach (AxisJogService s in _jogServices)
                 s.EmergencyStop();
+            // 向硬件下发急停，避免仅冻结本地 Target 而轴仍在运动
+            if (_hub != null)
+                _hub.EmergencyStop();
             MachineStatus.bSemiProcess = false;
             SetModuleVariable("主平台请求移动", "false");
             return true;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using InterfaceDefine;
@@ -31,13 +32,14 @@ namespace ProcessModules.PointJump
         {
             PointJumpProjectSetting pDoc = null;
             string sDirectory = Path.Combine(
-                ProcessModuleEnvironment.CurrentProjectPath, actionerName, "PointJumpProjectSetting.xml");
+                MainModule.ProjectManager.projectSetting.strProjectPath, actionerName, "PointJumpProjectSetting.xml");
             try
             {
-                pDoc = XmlSerializationHelper.ReadFromFile<PointJumpProjectSetting>(sDirectory);
+                pDoc = InterfaceDefine.CommKit.XMLSerializationHelper.ReadFromFile<PointJumpProjectSetting>(sDirectory);
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("PointJumpProjectSetting 加载失败:" + ex.Message);
                 pDoc = new PointJumpProjectSetting();
             }
             pDoc.Name = actionerName;
@@ -51,13 +53,13 @@ namespace ProcessModules.PointJump
         /// </summary>
         public bool Save()
         {
-            string sDirectory = Path.Combine(ProcessModuleEnvironment.CurrentProjectPath, Name);
+            string sDirectory = Path.Combine(MainModule.ProjectManager.projectSetting.strProjectPath, Name);
             if (!Directory.Exists(sDirectory))
             {
                 Directory.CreateDirectory(sDirectory);
             }
             sDirectory = Path.Combine(sDirectory, "PointJumpProjectSetting.xml");
-            XmlSerializationHelper.SaveToFile(sDirectory, this);
+            InterfaceDefine.CommKit.XMLSerializationHelper.SaveToFile(sDirectory, this);
             return true;
         }
     }

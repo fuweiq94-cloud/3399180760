@@ -46,8 +46,8 @@ namespace ProcessModules.Trajectory
             try
             {
                 string sDirectory = Path.Combine(
-                    ProcessModuleEnvironment.AppParamPath(), "ProcessModule", strName, "TrajectoryGlobalSetting.xml");
-                pDoc = XmlSerializationHelper.ReadFromFile<TrajectoryGlobalSetting>(sDirectory);
+                    InterfaceDefine.AppParam.AppParamPath(), "ProcessModule", strName, "TrajectoryGlobalSetting.xml");
+                pDoc = InterfaceDefine.CommKit.XMLSerializationHelper.ReadFromFile<TrajectoryGlobalSetting>(sDirectory);
             }
             catch (Exception eMy)
             {
@@ -67,8 +67,8 @@ namespace ProcessModules.Trajectory
         public bool Save()
         {
             string sDirectory = Path.Combine(
-                ProcessModuleEnvironment.AppParamPath(), "ProcessModule", name, "TrajectoryGlobalSetting.xml");
-            XmlSerializationHelper.SaveToFile(sDirectory, this);
+                InterfaceDefine.AppParam.AppParamPath(), "ProcessModule", name, "TrajectoryGlobalSetting.xml");
+            InterfaceDefine.CommKit.XMLSerializationHelper.SaveToFile(sDirectory, this);
             return true;
         }
     }

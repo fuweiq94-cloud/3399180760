@@ -44,12 +44,12 @@ namespace ProcessModules
         /// <summary>每次点动触发（首次按下会立即触发一次，之后按间隔重复）。</summary>
         [Category("Action")]
         [Description("按下/连续触发时引发，参数为 Direction。")]
-        public event EventHandler<int> Jog;
+        public event EventHandler<JogEventArgs> Jog;
 
         /// <summary>松开按钮时触发。</summary>
         [Category("Action")]
         [Description("松开按钮时引发，参数为 Direction。")]
-        public event EventHandler<int> Stop;
+        public event EventHandler<JogEventArgs> Stop;
 
         public JogButton()
         {
@@ -151,14 +151,14 @@ namespace ProcessModules
 
         protected virtual void OnJog()
         {
-            EventHandler<int> h = Jog;
-            if (h != null) h(this, Direction);
+            EventHandler<JogEventArgs> h = Jog;
+            if (h != null) h(this, new JogEventArgs(Direction));
         }
 
         protected virtual void OnStop()
         {
-            EventHandler<int> h = Stop;
-            if (h != null) h(this, Direction);
+            EventHandler<JogEventArgs> h = Stop;
+            if (h != null) h(this, new JogEventArgs(Direction));
         }
 
         // —— 绘制 ——
@@ -236,6 +236,20 @@ namespace ProcessModules
                 _timer.Dispose();
             }
             base.Dispose(disposing);
+        }
+    }
+
+    /// <summary>
+    /// JogButton 点动/停止事件参数（VS2017 设计器兼容：标准 EventArgs，替代泛型 EventHandler&lt;int&gt;）。
+    /// </summary>
+    public class JogEventArgs : EventArgs
+    {
+        /// <summary>点动方向（+1 / -1）。</summary>
+        public int Direction { get; private set; }
+
+        public JogEventArgs(int direction)
+        {
+            Direction = direction;
         }
     }
 }

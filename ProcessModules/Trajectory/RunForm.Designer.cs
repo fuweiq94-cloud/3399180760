@@ -121,7 +121,7 @@ namespace ProcessModules.Trajectory
             // splitMain.Panel1
             // 
             this.splitMain.Panel1.Controls.Add(this.xyView);
-            this.splitMain.Panel1.Padding = new System.Windows.Forms.Padding(8);
+            this.splitMain.Panel1.Padding = new System.Windows.Forms.Padding(12);
             this.splitMain.Panel1MinSize = 200;
             // 
             // splitMain.Panel2
@@ -131,6 +131,7 @@ namespace ProcessModules.Trajectory
             this.splitMain.Panel2MinSize = 70;
             this.splitMain.Size = new System.Drawing.Size(1084, 724);
             this.splitMain.SplitterDistance = 1000;
+            this.splitMain.SplitterWidth = 6;
             this.splitMain.TabIndex = 0;
             // 
             // xyView
@@ -139,8 +140,8 @@ namespace ProcessModules.Trajectory
             this.xyView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.xyView.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.xyView.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(70)))), ((int)(((byte)(90)))));
-            this.xyView.Location = new System.Drawing.Point(8, 8);
-            this.xyView.Margin = new System.Windows.Forms.Padding(4);
+            this.xyView.Location = new System.Drawing.Point(12, 12);
+            this.xyView.Margin = new System.Windows.Forms.Padding(6);
             this.xyView.Name = "xyView";
             this.xyView.RangeMax = 100F;
             this.xyView.RangeMin = -100F;
@@ -455,7 +456,7 @@ namespace ProcessModules.Trajectory
             // 
             // TrajectoryViewForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1424, 753);
             this.Controls.Add(this.splitMain);

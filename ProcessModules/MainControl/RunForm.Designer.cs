@@ -184,7 +184,7 @@ namespace ProcessModules.MainControl
             // splitMain.Panel1
             // 
             this.splitMain.Panel1.Controls.Add(this.xyView);
-            this.splitMain.Panel1.Padding = new System.Windows.Forms.Padding(18);
+            this.splitMain.Panel1.Padding = new System.Windows.Forms.Padding(12);
             this.splitMain.Panel1MinSize = 200;
             // 
             // splitMain.Panel2
@@ -203,7 +203,7 @@ namespace ProcessModules.MainControl
             this.xyView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.xyView.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.xyView.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(70)))), ((int)(((byte)(90)))));
-            this.xyView.Location = new System.Drawing.Point(18, 18);
+            this.xyView.Location = new System.Drawing.Point(12, 12);
             this.xyView.Margin = new System.Windows.Forms.Padding(6);
             this.xyView.Name = "xyView";
             this.xyView.Size = new System.Drawing.Size(1624, 1217);

@@ -331,10 +331,9 @@ namespace ProcessModules.Trajectory
 
         public override bool StopAll()
         {
-            // 把三轴目标冻结在当前值，动画立即停止
-            _hub.X.SetTarget(_hub.X.Current);
-            _hub.Y.SetTarget(_hub.Y.Current);
-            _hub.Z.SetTarget(_hub.Z.Current);
+            // 向硬件下发急停，并冻结本地目标
+            if (_hub != null)
+                _hub.EmergencyStop();
             MachineStatus.bSemiProcess = false;
             return true;
         }

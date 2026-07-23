@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 工艺模组类库：完全独立的工艺模块项目（参照 DOMO 模板的独立工艺模组 DLL）。
+<!-- 工艺模组类库：依赖外部 InterfaceDefine.dll 和 MainModule.dll（参照 DOMO 模板的独立工艺模组 DLL）。
      双向零引用：不引用 XyzController / XyzController.Controls / XyzController.WpfHost，
      所需的业务层（Logic）、自定义控件（Controls）、运行界面（各模组 RunForm）均已移植到本项目内。
      引用配置覆盖 DOMO 示例全部依赖：
-       InterfaceDefine.ProcessModuleBase        → ProcessModuleBase.cs（自包含）
-       InterfaceDefine.AppParam / ProjectManager → ProcessModuleEnvironment.cs（自包含）
-       InterfaceDefine.CommKit.XMLSerializationHelper → XmlSerializationHelper.cs（自包含）
-       MainModule.TaskItemSetting/TaskVariable/DataType → ModuleVariables.cs（自包含）
-       MainModule.MachineStatus                 → MachineStatus.cs（自包含）
+       InterfaceDefine.ProcessModuleBase        → 来自外部 InterfaceDefine.dll
+       InterfaceDefine.AppParam / ProjectManager → 来自外部 InterfaceDefine.dll / MainModule.dll
+       InterfaceDefine.CommKit.XMLSerializationHelper → 来自外部 InterfaceDefine.dll
+       MainModule.TaskItemSetting/TaskVariable/DataType → 来自外部 MainModule.dll
+       MainModule.MachineStatus                 → 来自外部 MainModule.dll
        BCL：System / System.Core(Linq,Tasks) / System.Drawing / System.Windows.Forms / System.Xml / Microsoft.CSharp(dynamic) -->
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
@@ -46,15 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <!-- —— 工艺模组基础设施（对应 DOMO 依赖的 InterfaceDefine / MainModule）—— -->
-    <Compile Include="MachineStatus.cs" />
-    <Compile Include="ModuleAlarmEventArgs.cs" />
-    <Compile Include="ModuleVariables.cs" />
+    <!-- —— 业务核心类（不依赖外部 DLL）—— -->
     <Compile Include="PresetPoint.cs" />
-    <Compile Include="ProcessModuleBase.cs" />
-    <Compile Include="ProcessModuleEnvironment.cs" />
     <Compile Include="ProcessModuleManager.cs" />
-    <Compile Include="XmlSerializationHelper.cs" />
     <Compile Include="ModuleSettingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -67,6 +61,7 @@
     <Compile Include="Logic\AxisPosition.cs" />
     <Compile Include="Logic\IMotionService.cs" />
     <Compile Include="Logic\PlatformMotionService.cs" />
+    <Compile Include="Logic\PlatformMotionAdapter.cs" />
     <Compile Include="Logic\JogMode.cs" />
     <Compile Include="Logic\MotionCommand.cs" />
     <Compile Include="Logic\XyzControllerHub.cs" />
@@ -86,6 +81,18 @@
     </Compile>
     <Compile Include="MainControl\RunForm.Designer.cs">
       <DependentUpon>RunForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainControl\UnifiedRunForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainControl\UnifiedRunForm.Designer.cs">
+      <DependentUpon>UnifiedRunForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainControl\AxisLimitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainControl\AxisLimitForm.Designer.cs">
+      <DependentUpon>AxisLimitForm.cs</DependentUpon>
     </Compile>
     <!-- —— 点位跳转工艺模组 —— -->
     <Compile Include="PointJump\PointJumpGlobalSetting.cs" />
@@ -114,6 +121,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainControl\RunForm.resx">
       <DependentUpon>RunForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainControl\UnifiedRunForm.resx">
+      <DependentUpon>UnifiedRunForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PointJump\RunForm.resx">
       <DependentUpon>RunForm.cs</DependentUpon>

@@ -239,8 +239,29 @@ namespace ProcessModules.PointJump
                         ret = -2;
                         break;
                     }
+                    
+                    float x, y, z;
+                    if (!float.TryParse(param[1].ToString(), out x))
+                    {
+                        InsertAlarm("GOTO 命令 X 坐标格式错误:" + param[1]);
+                        ret = -2;
+                        break;
+                    }
+                    if (!float.TryParse(param[2].ToString(), out y))
+                    {
+                        InsertAlarm("GOTO 命令 Y 坐标格式错误:" + param[2]);
+                        ret = -2;
+                        break;
+                    }
+                    if (!float.TryParse(param[3].ToString(), out z))
+                    {
+                        InsertAlarm("GOTO 命令 Z 坐标格式错误:" + param[3]);
+                        ret = -2;
+                        break;
+                    }
+                    
                     SetModuleVariable("主平台请求跳转", "true");
-                    _hub.SetTarget(Convert.ToSingle(param[1]), Convert.ToSingle(param[2]), Convert.ToSingle(param[3]));
+                    _hub.SetTarget(x, y, z);
                     projectSetting.JumpCount++;
                     SetModuleVariable("跳转完成", "true");
                     break;
@@ -386,10 +407,9 @@ namespace ProcessModules.PointJump
 
         public override bool StopAll()
         {
-            // 把三轴目标冻结在当前值，动画立即停止
-            _hub.X.SetTarget(_hub.X.Current);
-            _hub.Y.SetTarget(_hub.Y.Current);
-            _hub.Z.SetTarget(_hub.Z.Current);
+            // 向硬件下发急停，并冻结本地目标
+            if (_hub != null)
+                _hub.EmergencyStop();
             MachineStatus.bSemiProcess = false;
             SetModuleVariable("主平台请求跳转", "false");
             return true;

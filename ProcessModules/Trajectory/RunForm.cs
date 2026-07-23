@@ -33,6 +33,15 @@ namespace ProcessModules.Trajectory
         private int _trailPointCount;
 
         /// <summary>
+        /// 无参构造：仅供 VS 设计器实例化使用。
+        /// 运行时请使用带参构造函数注入工艺模组。
+        /// </summary>
+        public RunForm()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// DOMO 模式构造：由所属工艺模组创建运行界面（new RunForm(this)）。
         /// </summary>
         /// <param name="module">所属轨迹查看工艺模组。</param>
@@ -85,7 +94,7 @@ namespace ProcessModules.Trajectory
             btnCenter.Click += new EventHandler(BtnCenter_Click);
             btnRandom.Click += new EventHandler(BtnRandom_Click);
             trbSpeed.Scroll += new EventHandler(TrbSpeed_Scroll);
-            xyView.TargetSetByMouse += new EventHandler<PointF>(XyView_TargetSetByMouse);
+            xyView.TargetSetByMouse += new EventHandler<TargetSetEventArgs>(XyView_TargetSetByMouse);
             this.KeyDown += new KeyEventHandler(RunForm_KeyDown);
         }
 
@@ -159,7 +168,7 @@ namespace ProcessModules.Trajectory
         }
 
         /// <summary>鼠标点击 XY 视图设定目标。</summary>
-        private void XyView_TargetSetByMouse(object sender, PointF e)
+        private void XyView_TargetSetByMouse(object sender, TargetSetEventArgs e)
         {
             _hub.X.SetTarget(e.X);
             _hub.Y.SetTarget(e.Y);
@@ -208,7 +217,21 @@ namespace ProcessModules.Trajectory
 
         private void Hub_Changed(object sender, EventArgs e)
         {
+            // 硬件回调可能跨线程，安全地切到 UI 线程刷新
+            if (InvokeRequired)
+            {
+                BeginInvoke(new EventHandler(Hub_Changed), sender, e);
+                return;
+            }
             SyncUiFromHub();
+        }
+
+        /// <summary>窗体关闭时退订 Hub，避免重复订阅与已释放控件被回调。</summary>
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            if (_hub != null)
+                _hub.Changed -= Hub_Changed;
+            base.OnFormClosed(e);
         }
 
         /// <summary>把 hub 状态同步到 UI 控件。</summary>

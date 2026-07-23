@@ -143,9 +143,9 @@ namespace ProcessModules.PointJump
             // splitMain.Panel2
             // 
             this.splitMain.Panel2.Controls.Add(this.pnlRight);
-            this.splitMain.Panel2MinSize = 380;
+            this.splitMain.Panel2MinSize = 420;
             this.splitMain.Size = new System.Drawing.Size(1926, 1101);
-            this.splitMain.SplitterDistance = 1536;
+            this.splitMain.SplitterDistance = 1460;
             this.splitMain.SplitterWidth = 6;
             this.splitMain.TabIndex = 0;
             // 
@@ -172,19 +172,19 @@ namespace ProcessModules.PointJump
             this.pnlRight.Location = new System.Drawing.Point(0, 0);
             this.pnlRight.Margin = new System.Windows.Forms.Padding(4);
             this.pnlRight.Name = "pnlRight";
-            this.pnlRight.Padding = new System.Windows.Forms.Padding(12);
-            this.pnlRight.Size = new System.Drawing.Size(384, 1101);
+            this.pnlRight.Padding = new System.Windows.Forms.Padding(14);
+            this.pnlRight.Size = new System.Drawing.Size(460, 1101);
             this.pnlRight.TabIndex = 0;
             // 
             // grpSpeed
             // 
             this.grpSpeed.Controls.Add(this.tlpSpeed);
             this.grpSpeed.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpSpeed.Location = new System.Drawing.Point(12, 882);
-            this.grpSpeed.Margin = new System.Windows.Forms.Padding(4);
+            this.grpSpeed.Location = new System.Drawing.Point(14, 882);
+            this.grpSpeed.Margin = new System.Windows.Forms.Padding(6, 12, 6, 4);
             this.grpSpeed.Name = "grpSpeed";
-            this.grpSpeed.Padding = new System.Windows.Forms.Padding(6);
-            this.grpSpeed.Size = new System.Drawing.Size(360, 120);
+            this.grpSpeed.Padding = new System.Windows.Forms.Padding(8);
+            this.grpSpeed.Size = new System.Drawing.Size(432, 110);
             this.grpSpeed.TabIndex = 3;
             this.grpSpeed.TabStop = false;
             this.grpSpeed.Text = "运动速度";
@@ -231,11 +231,11 @@ namespace ProcessModules.PointJump
             // 
             this.grpPresets.Controls.Add(this.tlpPresets);
             this.grpPresets.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpPresets.Location = new System.Drawing.Point(12, 522);
-            this.grpPresets.Margin = new System.Windows.Forms.Padding(4);
+            this.grpPresets.Location = new System.Drawing.Point(14, 522);
+            this.grpPresets.Margin = new System.Windows.Forms.Padding(6, 12, 6, 4);
             this.grpPresets.Name = "grpPresets";
-            this.grpPresets.Padding = new System.Windows.Forms.Padding(6);
-            this.grpPresets.Size = new System.Drawing.Size(360, 360);
+            this.grpPresets.Padding = new System.Windows.Forms.Padding(8);
+            this.grpPresets.Size = new System.Drawing.Size(432, 340);
             this.grpPresets.TabIndex = 2;
             this.grpPresets.TabStop = false;
             this.grpPresets.Text = "预设点位";
@@ -342,11 +342,11 @@ namespace ProcessModules.PointJump
             // 
             this.grpTarget.Controls.Add(this.tlpTarget);
             this.grpTarget.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpTarget.Location = new System.Drawing.Point(12, 252);
-            this.grpTarget.Margin = new System.Windows.Forms.Padding(4);
+            this.grpTarget.Location = new System.Drawing.Point(14, 252);
+            this.grpTarget.Margin = new System.Windows.Forms.Padding(6, 12, 6, 4);
             this.grpTarget.Name = "grpTarget";
-            this.grpTarget.Padding = new System.Windows.Forms.Padding(6);
-            this.grpTarget.Size = new System.Drawing.Size(360, 270);
+            this.grpTarget.Padding = new System.Windows.Forms.Padding(8);
+            this.grpTarget.Size = new System.Drawing.Size(432, 260);
             this.grpTarget.TabIndex = 1;
             this.grpTarget.TabStop = false;
             this.grpTarget.Text = "目标坐标输入";
@@ -491,11 +491,11 @@ namespace ProcessModules.PointJump
             // 
             this.grpDro.Controls.Add(this.tlpDro);
             this.grpDro.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpDro.Location = new System.Drawing.Point(12, 12);
-            this.grpDro.Margin = new System.Windows.Forms.Padding(4);
+            this.grpDro.Location = new System.Drawing.Point(14, 14);
+            this.grpDro.Margin = new System.Windows.Forms.Padding(6, 4, 6, 4);
             this.grpDro.Name = "grpDro";
-            this.grpDro.Padding = new System.Windows.Forms.Padding(6);
-            this.grpDro.Size = new System.Drawing.Size(360, 240);
+            this.grpDro.Padding = new System.Windows.Forms.Padding(8);
+            this.grpDro.Size = new System.Drawing.Size(432, 220);
             this.grpDro.TabIndex = 0;
             this.grpDro.TabStop = false;
             this.grpDro.Text = "实时坐标";

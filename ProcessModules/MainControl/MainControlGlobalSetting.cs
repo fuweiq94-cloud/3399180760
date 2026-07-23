@@ -49,8 +49,8 @@ namespace ProcessModules.MainControl
             try
             {
                 string sDirectory = Path.Combine(
-                    ProcessModuleEnvironment.AppParamPath(), "ProcessModule", strName, "MainControlGlobalSetting.xml");
-                pDoc = XmlSerializationHelper.ReadFromFile<MainControlGlobalSetting>(sDirectory);
+                    InterfaceDefine.AppParam.AppParamPath(), "ProcessModule", strName, "MainControlGlobalSetting.xml");
+                pDoc = InterfaceDefine.CommKit.XMLSerializationHelper.ReadFromFile<MainControlGlobalSetting>(sDirectory);
             }
             catch (Exception eMy)
             {
@@ -70,8 +70,8 @@ namespace ProcessModules.MainControl
         public bool Save()
         {
             string sDirectory = Path.Combine(
-                ProcessModuleEnvironment.AppParamPath(), "ProcessModule", name, "MainControlGlobalSetting.xml");
-            XmlSerializationHelper.SaveToFile(sDirectory, this);
+                InterfaceDefine.AppParam.AppParamPath(), "ProcessModule", name, "MainControlGlobalSetting.xml");
+            InterfaceDefine.CommKit.XMLSerializationHelper.SaveToFile(sDirectory, this);
             return true;
         }
     }

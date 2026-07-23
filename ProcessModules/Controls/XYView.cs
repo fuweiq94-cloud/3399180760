@@ -76,6 +76,9 @@ namespace ProcessModules
         private readonly List<PointF> _trail = new List<PointF>();
         private const int MaxTrail = 400;
 
+        // 预设点位标记
+        private readonly List<PresetPoint> _presetMarkers = new List<PresetPoint>();
+
         // 鼠标拖拽相关
         private bool _dragging;
         private bool _hover;
@@ -83,7 +86,7 @@ namespace ProcessModules
         // 当用户通过鼠标点击/拖拽设定新目标时触发
         [Category("Action")]
         [Description("用户通过鼠标点击/拖拽设定新目标时触发。")]
-        public event EventHandler<PointF> TargetSetByMouse;
+        public event EventHandler<TargetSetEventArgs> TargetSetByMouse;
 
         public XYView()
         {
@@ -182,6 +185,22 @@ namespace ProcessModules
             Invalidate();
         }
 
+        /// <summary>设置预设点位标记（在视图上显示菱形标记 + 名称）。</summary>
+        public void SetPresetMarkers(List<PresetPoint> presets)
+        {
+            _presetMarkers.Clear();
+            if (presets != null)
+                _presetMarkers.AddRange(presets);
+            Invalidate();
+        }
+
+        /// <summary>清除预设点位标记。</summary>
+        public void ClearPresetMarkers()
+        {
+            _presetMarkers.Clear();
+            Invalidate();
+        }
+
         private static float Dist(PointF a, PointF b)
         {
             float dx = a.X - b.X, dy = a.Y - b.Y;
@@ -201,6 +220,7 @@ namespace ProcessModules
             DrawGrid(g, area);
             DrawAxes(g, area);
             DrawTrail(g);
+            DrawPresetMarkers(g);
             DrawCrosshair(g, area);
             DrawTarget(g);
             DrawCurrent(g);
@@ -281,6 +301,35 @@ namespace ProcessModules
                 for (int i = 0; i < _trail.Count; i++)
                     pts[i] = ToScreen(_trail[i].X, _trail[i].Y);
                 g.DrawLines(p, pts);
+            }
+        }
+
+        private void DrawPresetMarkers(Graphics g)
+        {
+            if (_presetMarkers.Count == 0) return;
+            using (Pen pen = new Pen(Color.FromArgb(220, 160, 60), 1.8f))
+            using (Brush brush = new SolidBrush(Color.FromArgb(180, 200, 160, 60)))
+            using (Font f = new Font("Segoe UI", 7F))
+            using (Brush tb = new SolidBrush(Color.FromArgb(180, 140, 50)))
+            {
+                for (int i = 0; i < _presetMarkers.Count; i++)
+                {
+                    PresetPoint pt = _presetMarkers[i];
+                    PointF sp = ToScreen(pt.X, pt.Y);
+
+                    // 菱形标记 (8x8)
+                    PointF[] diamond = new PointF[4];
+                    diamond[0] = new PointF(sp.X, sp.Y - 6);     // 上
+                    diamond[1] = new PointF(sp.X + 6, sp.Y);     // 右
+                    diamond[2] = new PointF(sp.X, sp.Y + 6);     // 下
+                    diamond[3] = new PointF(sp.X - 6, sp.Y);     // 左
+                    g.FillPolygon(brush, diamond);
+                    g.DrawPolygon(pen, diamond);
+
+                    // 名称标注
+                    if (!string.IsNullOrEmpty(pt.Name))
+                        g.DrawString(pt.Name, f, tb, sp.X + 8, sp.Y - 8);
+                }
             }
         }
 
@@ -393,8 +442,28 @@ namespace ProcessModules
 
         protected virtual void OnTargetSetByMouse(PointF p)
         {
-            EventHandler<PointF> h = TargetSetByMouse;
-            if (h != null) h(this, p);
+            EventHandler<TargetSetEventArgs> h = TargetSetByMouse;
+            if (h != null) h(this, new TargetSetEventArgs(p));
+        }
+    }
+
+    /// <summary>
+    /// XYView 鼠标设目标事件参数（VS2017 设计器兼容：标准 EventArgs，替代泛型 EventHandler&lt;PointF&gt;）。
+    /// </summary>
+    public class TargetSetEventArgs : EventArgs
+    {
+        /// <summary>用户设定的目标点（机械坐标）。</summary>
+        public PointF Point { get; private set; }
+
+        /// <summary>目标点 X 分量。</summary>
+        public float X { get { return Point.X; } }
+
+        /// <summary>目标点 Y 分量。</summary>
+        public float Y { get { return Point.Y; } }
+
+        public TargetSetEventArgs(PointF point)
+        {
+            Point = point;
         }
     }
 }

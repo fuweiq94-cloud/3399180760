@@ -43,8 +43,8 @@ namespace ProcessModules.PointJump
             try
             {
                 string sDirectory = Path.Combine(
-                    ProcessModuleEnvironment.AppParamPath(), "ProcessModule", strName, "PointJumpGlobalSetting.xml");
-                pDoc = XmlSerializationHelper.ReadFromFile<PointJumpGlobalSetting>(sDirectory);
+                    InterfaceDefine.AppParam.AppParamPath(), "ProcessModule", strName, "PointJumpGlobalSetting.xml");
+                pDoc = InterfaceDefine.CommKit.XMLSerializationHelper.ReadFromFile<PointJumpGlobalSetting>(sDirectory);
             }
             catch (Exception eMy)
             {
@@ -64,8 +64,8 @@ namespace ProcessModules.PointJump
         public bool Save()
         {
             string sDirectory = Path.Combine(
-                ProcessModuleEnvironment.AppParamPath(), "ProcessModule", name, "PointJumpGlobalSetting.xml");
-            XmlSerializationHelper.SaveToFile(sDirectory, this);
+                InterfaceDefine.AppParam.AppParamPath(), "ProcessModule", name, "PointJumpGlobalSetting.xml");
+            InterfaceDefine.CommKit.XMLSerializationHelper.SaveToFile(sDirectory, this);
             return true;
         }
     }

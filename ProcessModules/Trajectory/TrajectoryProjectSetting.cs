@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using InterfaceDefine;
 
@@ -29,13 +30,14 @@ namespace ProcessModules.Trajectory
         {
             TrajectoryProjectSetting pDoc = null;
             string sDirectory = Path.Combine(
-                ProcessModuleEnvironment.CurrentProjectPath, actionerName, "TrajectoryProjectSetting.xml");
+                MainModule.ProjectManager.projectSetting.strProjectPath, actionerName, "TrajectoryProjectSetting.xml");
             try
             {
-                pDoc = XmlSerializationHelper.ReadFromFile<TrajectoryProjectSetting>(sDirectory);
+                pDoc = InterfaceDefine.CommKit.XMLSerializationHelper.ReadFromFile<TrajectoryProjectSetting>(sDirectory);
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("TrajectoryProjectSetting 加载失败:" + ex.Message);
                 pDoc = new TrajectoryProjectSetting();
             }
             pDoc.Name = actionerName;
@@ -47,13 +49,13 @@ namespace ProcessModules.Trajectory
         /// </summary>
         public bool Save()
         {
-            string sDirectory = Path.Combine(ProcessModuleEnvironment.CurrentProjectPath, Name);
+            string sDirectory = Path.Combine(MainModule.ProjectManager.projectSetting.strProjectPath, Name);
             if (!Directory.Exists(sDirectory))
             {
                 Directory.CreateDirectory(sDirectory);
             }
             sDirectory = Path.Combine(sDirectory, "TrajectoryProjectSetting.xml");
-            XmlSerializationHelper.SaveToFile(sDirectory, this);
+            InterfaceDefine.CommKit.XMLSerializationHelper.SaveToFile(sDirectory, this);
             return true;
         }
     }
